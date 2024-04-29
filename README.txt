@@ -1,1 +1,0 @@
-This is Edison Wu's portfolio site created from a template on HTML5 UP.
