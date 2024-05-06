@@ -268,14 +268,14 @@ footer {
   padding-right: 2rem;
 }
 
-@media only screen and (min-width: 400px) {
+@media only screen and (min-width: 300px) {
   html,
   body {
     width: 100%;
   }
 
   .container {
-    width: 90%;
+    width: 100%;
   }
 
   h1 {
@@ -289,11 +289,6 @@ footer {
     margin-top: 0.5rem;
     float: left;
     padding-left: 0;
-  }
-
-  .col-7,
-  .col-5 {
-    width: 96%;
   }
 
   .row [class^="col-6"] {
