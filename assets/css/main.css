@@ -10,13 +10,70 @@ img {
   width: 100%;
 }
 
-.berkeley {
-  background-color: white;
+article img {
+  filter: brightness(90%);
 }
 
-.berkeley a {
+h1 {
+  font-family: "Inter tight", sans-serif;
+  margin-top: 2rem;
+  font-size: 3rem;
+}
+
+h2 {
+  font-family: "Roboto Mono", monospace;
+  color: rgb(69, 68, 68);
+  text-align: center;
+  font-size: large;
+  font-weight: 300;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-color: rgb(61, 76, 106);
+  text-decoration-thickness: 0.3rem;
+}
+
+h3 {
+  margin-bottom: 0;
+  margin-top: 1rem;
+}
+
+li {
+  margin: 0.1rem;
+}
+
+a {
   text-decoration: none;
   color: black;
+}
+
+span {
+  font-weight: 700;
+  color: white;
+  background-color: black;
+}
+
+footer {
+  text-align: center;
+  padding: 3rem;
+  font-weight: 600;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.berkeley {
+  background-color: white;
 }
 
 .berkeley a:hover {
@@ -43,15 +100,21 @@ img {
 }
 
 .navLinks a:hover {
-  background-color: rgb(243, 248, 233);
-  padding: 0 1rem;
-  transition: background-color 1s ease;
+  background-color: rgb(54, 79, 4);
+  font-size: 0.9rem;
+  color: white;
+  transition: background-color 0.2s ease;
 }
 
 .tool {
   font-size: 11px;
+  margin-top: 0.5rem;
   font-weight: 400;
   color: white;
+}
+
+.datawrapper {
+  background-color: #1e81a2;
   border-radius: 3px;
   padding: 1.75px;
   padding-left: 5.2px;
@@ -61,38 +124,65 @@ img {
   vertical-align: middle;
 }
 
-.datawrapper {
-  background-color: #1e81a2;
-}
-
 .r {
   background-color: #70a5d4;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
 }
 
 .web {
   background-color: #edc056;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
 }
 
-h1 {
-  margin-top: 2rem;
-  font-size: 3rem;
-  font-family: "Inter tight", sans-serif;
+.data .box {
+  height: 410px;
+  border: 1.2px solid #b6b6ab;
+  box-shadow: 0px 1px #b6b6ab;
+  box-sizing: border-box;
+  padding: 10px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
 }
 
-h2 {
-  font-family: "Roboto Mono", monospace;
-  color: rgb(69, 68, 68);
-  text-align: center;
-  font-size: large;
-  font-weight: 300;
-  text-decoration: underline;
-  text-decoration-style: solid;
-  text-decoration-color: rgb(61, 76, 106);
-  text-decoration-thickness: 0.3rem;
+.others-writing .box {
+  height: 450px;
+  border: 1.2px solid #b6b6ab;
+  box-shadow: 0px 1px #b6b6ab;
+  box-sizing: border-box;
+  padding: 10px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
 }
 
-li {
-  margin: 0.1rem;
+.others-video .box {
+  height: 430px;
+  border: 1.2px solid #b6b6ab;
+  box-shadow: 0px 1px #b6b6ab;
+  box-sizing: border-box;
+  padding: 10px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.box:hover {
+  transform: scale(1.05);
+}
+
+.box img {
+  height: 270px;
+  object-fit: cover;
 }
 
 .name {
@@ -112,45 +202,36 @@ li {
   width: 90%;
 }
 
-article img {
-  filter: brightness(80%);
+.row [class^="col-7"] {
+  float: left;
+  margin-left: 0;
+}
+
+.row [class^="col-5"] {
+  float: left;
+  margin-left: 0;
 }
 
 .stem img {
   filter: brightness(95%);
 }
 
-img:hover {
-  filter: brightness(110%);
-  cursor: pointer;
+.guess img {
+  filter: brightness(100%);
 }
 
-h3 a {
+.name {
+  margin-left: 0;
+}
+
+/* h3 a {
   color: black;
   text-decoration: none;
 }
 
 h3 a:hover {
   background-color: rgb(243, 248, 233);
-}
-
-footer {
-  font-weight: 600;
-  padding-bottom: 1rem;
-  padding-top: 1rem;
-}
-
-@keyframes gradient-animation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+} */
 
 .dynamic-gradient,
 footer {
@@ -163,28 +244,9 @@ footer {
   animation: gradient-animation 10s linear infinite;
 }
 
-#writing,
-#video {
-  border-color: #000;
-  border-width: 0.05rem;
-  padding-bottom: 0rem;
-  margin-top: 4rem;
-  margin-bottom: 2rem;
-}
-
-#data {
-  padding-bottom: 1rem;
-}
-
-span {
-  font-weight: 700;
-  color: white;
-  background-color: black;
-}
-
-footer {
-  text-align: center;
-  padding: 3rem;
+.date {
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 .email,
@@ -194,7 +256,23 @@ footer {
   width: 1.4rem;
 }
 
+#data,
+#writing,
+#video {
+  font-weight: 400;
+  border-color: #000;
+  border-width: 0.05rem;
+  padding-bottom: 0rem;
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+  padding-right: 2rem;
+}
+
 @media only screen and (min-width: 400px) {
+  html,
+  body {
+    width: 90%;
+  }
   h1 {
     font-size: 3rem;
     padding: 0;
@@ -211,6 +289,10 @@ footer {
   .col-7,
   .col-5 {
     width: 96%;
+  }
+
+  .row [class^="col-6"] {
+    margin-bottom: 2rem;
   }
 
   .bio {
@@ -253,7 +335,11 @@ footer {
   }
 }
 
-@media only screen and (min-width: 1080px) {
+@media only screen and (min-width: 1280px) {
+  html,
+  body {
+    width: 75%;
+  }
   h1 {
     font-size: 4rem;
     margin-bottom: 3rem;
