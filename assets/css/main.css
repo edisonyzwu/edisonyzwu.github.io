@@ -303,6 +303,14 @@ footer {
   .bio {
     width: 400px;
   }
+
+  .box {
+    height: 480px;
+  }
+
+  .others-video .box {
+    height: 500px;
+  }
 }
 
 @media only screen and (min-width: 640px) {
