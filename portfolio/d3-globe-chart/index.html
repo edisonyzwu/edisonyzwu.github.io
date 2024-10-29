@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Globe World Map</title>
+    <style>
+      .tooltip {
+        position: absolute;
+        background: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+        opacity: 0;
+        font-family: Arial, sans-serif;
+      }
+      .country-name {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .asylum-count {
+        font-size: 16px;
+      }
+      .arcs {
+        transition: opacity 0.2s;
+      }
+      .arcs:hover {
+        opacity: 1 !important;
+        stroke-width: 6px !important;
+        stroke: yellow !important;
+      }
+      .controls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+      }
+      .controls button {
+        margin-right: 5px;
+      }
+
+      h1,
+      h2 {
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      h2 {
+        font-weight: 200;
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title-container">
+      <h1 class="mainTitle">Number of Chinese asylum-seekers in different countries</h1>
+      <h2 class="byline">The U.S. has always been the most popular choice.</h2>
+    </div>
+
+    <div id="chart"></div>
+    <div class="container vh-100"></div>
+    <div class="controls">
+      <button id="play">Play</button>
+      <button id="pause">Pause</button>
+      <span id="year-display">Year: 2023</span>
+    </div>
+
+    <script src="js/d3.v5.min.js"></script>
+    <script src="js/d3-geo-projection.v2.min.js"></script>
+    <script src="js/d3-array.v2.min.js"></script>
+    <script src="js/d3-drag.v1.min.js"></script>
+    <script src="js/topojson.min.js"></script>
+    <script>
+      const margin = {top: 0, right: 0, bottom: 0, left: 0},
+        width = 1000 - margin.left - margin.right,
+        height = 800 - margin.top - margin.bottom;
+
+      // Create tooltip div
+      const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+
+      const svg = d3
+        .select("#chart")
+        .append("svg")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr(
+          "viewBox",
+          `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`
+        );
+
+      const chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+      let currentYear = 2023;
+      let timer;
+      let allData;
+
+      Promise.all([
+        d3.json("countries-110m.json"),
+        d3.csv("globe.csv", function (d) {
+          return {
+            year: +d.Year,
+            asylum: +d.Asylum,
+            lat: +d.Latitude,
+            long: +d.Longitude,
+            country: d.Country,
+          };
+        }),
+      ]).then(function (data) {
+        allData = data[1];
+
+        const projection = d3
+          .geoOrthographic()
+          .fitExtent(
+            [
+              [0, 0],
+              [width, height],
+            ],
+            topojson.feature(data[0], data[0].objects.countries)
+          )
+          .rotate([300, -30, 0]);
+
+        const path = d3.geoPath().projection(projection);
+
+        const chinaCoords = [116.4074, 39.9042];
+
+        const lineWidth = d3
+          .scaleLinear()
+          .domain(
+            d3.extent(allData, function (d) {
+              return d.asylum;
+            })
+          )
+          .range([0.5, 8]);
+
+        const colorScale = d3
+          .scaleThreshold()
+          .domain([1, 1000, 5000, 10000])
+          .range(["#c1e7ff", "#7fb3d5", "#1f78b4", "#08306b"]);
+
+        // Draw ocean background
+        chart
+          .append("circle")
+          .attr("cx", width / 2)
+          .attr("cy", height / 2)
+          .attr("r", projection.scale())
+          .attr("fill", "#a2abb3");
+
+        // Draw countries
+        chart
+          .selectAll("path.countries")
+          .data(topojson.feature(data[0], data[0].objects.countries).features)
+          .join("path")
+          .attr("d", path)
+          .attr("class", function (d) {
+            return "countries " + d.properties.name;
+          })
+          .attr("stroke", "#999")
+          .attr("stroke-width", "0.5px")
+          .attr("fill", function (d) {
+            if (d.properties.name === "China") {
+              return "#8b0000"; // Deep red for China
+            }
+            const countryData = allData.find(
+              (c) => c.country === d.properties.name && c.year === currentYear
+            );
+            return countryData && countryData.asylum > 0
+              ? colorScale(countryData.asylum)
+              : "#f3f2f3";
+          });
+
+        // Draw arcs and add interactions
+        function updateArcs(year) {
+          const filteredData = allData.filter((d) => d.year === year && d.asylum > 0);
+
+          const arcs = chart.selectAll("path.arcs").data(filteredData);
+
+          arcs
+            .enter()
+            .append("path")
+            .attr("class", "arcs")
+            .merge(arcs)
+            .attr("d", function (d) {
+              const coords = [
+                [chinaCoords[0], chinaCoords[1]],
+                [d.long, d.lat],
+              ];
+              return path({type: "LineString", coordinates: coords});
+            })
+            .attr("stroke", "#e34a33")
+            .attr("stroke-width", function (d) {
+              return lineWidth(d.asylum);
+            })
+            .attr("fill", "none")
+            .style("opacity", 0.4) // Reduce default opacity
+            .on("mouseover", function (d) {
+              // Highlight current arc
+              d3.select(this)
+                .style("opacity", 1)
+                .style("stroke-width", function (d) {
+                  return lineWidth(d.asylum) * 2;
+                })
+                .style("stroke", "yellow");
+
+              // Show tooltip
+              tooltip.transition().duration(200).style("opacity", 0.9);
+
+              tooltip
+                .html(
+                  `
+                <div class="country-name">China → ${d.country}</div>
+                <div class="asylum-count">${d.asylum.toLocaleString()}</div>
+              `
+                )
+                .style("left", d3.event.pageX + 10 + "px")
+                .style("top", d3.event.pageY - 28 + "px");
+            })
+            .on("mouseout", function (d) {
+              // Restore arc style
+              d3.select(this)
+                .style("opacity", 0.4)
+                .style("stroke-width", function (d) {
+                  return lineWidth(d.asylum);
+                })
+                .style("stroke", "#e34a33");
+
+              // Hide tooltip
+              tooltip.transition().duration(500).style("opacity", 0);
+            });
+
+          arcs.exit().remove();
+        }
+
+        function updateYearDisplay(year) {
+          d3.select("#year-display").text(`Year: ${year}`);
+        }
+
+        function updateVisualization(year) {
+          currentYear = year;
+          updateYearDisplay(year);
+          updateArcs(year);
+
+          chart.selectAll("path.countries").attr("fill", function (d) {
+            if (d.properties.name === "China") {
+              return "#8b0000"; // Deep red for China
+            }
+            const countryData = allData.find(
+              (c) => c.country === d.properties.name && c.year === currentYear
+            );
+            return countryData && countryData.asylum > 0
+              ? colorScale(countryData.asylum)
+              : "#f3f2f3";
+          });
+        }
+
+        // Drag interaction
+        let v0, r0;
+
+        const drag = d3
+          .drag()
+          .subject(function () {
+            const r = projection.rotate();
+            return {x: r[0], y: -r[1]};
+          })
+          .on("start", function () {
+            v0 = [d3.event.x, d3.event.y];
+            r0 = projection.rotate();
+          })
+          .on("drag", function () {
+            if (!v0) return;
+
+            const v1 = [d3.event.x, d3.event.y];
+            const dr = [v1[0] - v0[0], v1[1] - v0[1]];
+
+            const newLambda = r0[0] + dr[0] * 0.5;
+            const newPhi = r0[1] - dr[1] * 0.5;
+            const clampedPhi = Math.max(-90, Math.min(90, newPhi));
+
+            projection.rotate([newLambda, clampedPhi, r0[2]]);
+
+            chart.selectAll("path.countries").attr("d", path);
+            chart.selectAll("path.arcs").attr("d", function (d) {
+              const coords = [
+                [chinaCoords[0], chinaCoords[1]],
+                [d.long, d.lat],
+              ];
+              return path({type: "LineString", coordinates: coords});
+            });
+          })
+          .on("end", function () {
+            v0 = null;
+          });
+
+        chart.call(drag);
+
+        // Add play/pause functionality
+        d3.select("#play").on("click", function () {
+          if (timer) return;
+          timer = setInterval(function () {
+            currentYear = currentYear < 2023 ? currentYear + 1 : 2003;
+            updateVisualization(currentYear);
+          }, 1000);
+        });
+
+        d3.select("#pause").on("click", function () {
+          clearInterval(timer);
+          timer = null;
+        });
+
+        // Initial visualization
+        updateVisualization(currentYear);
+      });
+    </script>
+  </body>
+</html>
