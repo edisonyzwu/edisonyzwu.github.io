@@ -224,6 +224,11 @@ footer {
 
 .bio {
   margin-top: 0;
+  line-height: 1.5rem;
+}
+
+#reporter {
+  font-weight: bold;
 }
 
 .contact {
@@ -304,7 +309,7 @@ footer {
   border-color: #000;
   border-width: 0.05rem;
   padding-bottom: 0rem;
-  margin-top: 4rem;
+  margin-top: 2rem;
   margin-bottom: 2rem;
   padding-right: 2rem;
 }
