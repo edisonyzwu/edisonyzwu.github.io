@@ -110,7 +110,7 @@ async function draw() {
         .style("top", yScale(yAccessor(stock)) - 20 + "px")
         .style("left", xScale(xAccessor(stock)) + "px");
 
-      tooltip.select(".number").text(`Apprehensions: ${yAccessor(stock)}`);
+      tooltip.select(".number").html(`<strong>${yAccessor(stock)}</strong>`);
       const dateFormatter = d3.timeFormat("%B, %Y");
       tooltip.select(".date").text(dateFormatter(xAccessor(stock)));
     })

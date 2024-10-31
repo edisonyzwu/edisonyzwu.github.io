@@ -29,6 +29,7 @@ h2 {
   background-color: #fff;
   display: none;
   pointer-events: none;
+  text-align: center;
 }
 
 .price {
