@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rick and Morty Episode Ratings Heatmap</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      #chart-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+      .heatmap text {
+        font-size: 10px;
+        fill: #333;
+      }
+      .tooltip {
+        position: absolute;
+        text-align: left;
+        width: 200px;
+        padding: 10px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        pointer-events: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+        opacity: 1;
+      }
+      .tooltip .title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .tooltip .rating {
+        font-weight: bold;
+      }
+      .title-text {
+        font-family: "Luckiest Guy", cursive;
+        fill: #00b5e2;
+        stroke: #002f35;
+        stroke-width: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chart-container">
+      <div id="tooltip" class="tooltip" style="opacity: 0"></div>
+    </div>
+    <script>
+      d3.json("cleaned_data.json")
+        .then(function (data) {
+          if (!Array.isArray(data)) {
+            console.error("Data is not in expected format (array)");
+            return;
+          }
+
+          const margin = {top: 150, right: 20, bottom: 100, left: 100};
+          const size = 50;
+          const width = size * 11;
+          const height = size * 7;
+
+          const svg = d3
+            .select("#chart-container")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom + 50)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+          const maxSeason = 7;
+          const maxEpisode = 11;
+
+          const xScale = d3
+            .scaleBand()
+            .domain(d3.range(1, maxEpisode + 1))
+            .range([0, width])
+            .padding(0.1);
+
+          const yScale = d3
+            .scaleBand()
+            .domain(d3.range(1, maxSeason + 1))
+            .range([0, height])
+            .padding(0.1);
+
+          const colorScale = d3
+            .scaleLinear()
+            .domain([4.5, 7.1, 9.3])
+            .range(["#b47c34", "#e0f3f3", "#005f4f"]);
+
+          const tooltip = d3.select("#tooltip");
+
+          svg
+            .selectAll(".cell")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("x", (d) => xScale(+d.episode))
+            .attr("y", (d) => yScale(+d.season))
+            .attr("width", size)
+            .attr("height", size)
+            .attr("fill", (d) => colorScale(+d.imdb_rating))
+            .attr("stroke", "#fff")
+            .on("mouseover", function (event, d) {
+              d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
+              tooltip.transition().duration(200).style("opacity", 1);
+              tooltip
+                .html(
+                  `<div class="title">Season ${d.season} Episode ${d.episode}</div><strong>${d.title}</strong><br><span style="font-size: 12px;">Rating on IMDb: <span class="rating">${d.imdb_rating}</span></span>`
+                )
+                .style("left", event.pageX + 10 + "px")
+                .style("top", event.pageY - 28 + "px");
+            })
+            .on("mouseout", function () {
+              d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1);
+              tooltip.transition().duration(500).style("opacity", 0);
+            });
+
+          svg
+            .append("text")
+            .attr("x", -5)
+            .attr("y", -70)
+            .attr("text-anchor", "start")
+            .attr("class", "title-text")
+            .attr("font-size", "28px")
+            .text("Has Rick and Morty Fallen from Grace?");
+
+          svg
+            .append("text")
+            .attr("x", -5)
+            .attr("y", -45)
+            .attr("text-anchor", "start")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "14px")
+            .text("From season 5 onwa, ratings have become more uneven.");
+
+          svg
+            .append("text")
+            .attr("y", 0)
+            .attr("text-anchor", "start")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "12px")
+            .attr("font-weight", 600)
+            .attr("fill", "#7d7d7d")
+            .selectAll("tspan")
+            .data(["Seasons", "↓"])
+            .enter()
+            .append("tspan")
+            .attr("x", -5)
+            .attr("dy", (d, i) => (i === 0 ? "0" : "1.2em"))
+            .text((d) => d);
+
+          svg
+            .append("text")
+            .attr("x", -5)
+            .attr("y", -15)
+            .attr("text-anchor", "start")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "12px")
+            .attr("font-weight", 600)
+            .attr("fill", "#7d7d7d")
+            .text("Episodes →");
+
+          // Add a black line under season 4
+          svg
+            .append("line")
+            .attr("x1", 0)
+            .attr("x2", width)
+            .attr("y1", yScale(4) + size)
+            .attr("y2", yScale(4) + size)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+
+          // Add an arrow and annotation to the right of the line
+          svg
+            .append("text")
+            .attr("x", width - 60)
+            .attr("y", yScale(4) + size + 20)
+            .attr("text-anchor", "start")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "12px")
+            .attr("fill", "#7d7d7d");
+
+          const legendWidth = 300;
+          const legendHeight = 15;
+
+          const legend = svg
+            .append("g")
+            .attr("transform", `translate(${width / 2 - legendWidth / 2},${height + 30})`);
+
+          const legendScale = d3.scaleLinear().domain([4.5, 9.2]).range([0, legendWidth]);
+
+          const legendAxis = d3.axisBottom(legendScale).ticks(5);
+
+          legend
+            .append("defs")
+            .append("linearGradient")
+            .attr("id", "legendGradient")
+            .selectAll("stop")
+            .data([
+              {offset: "0%", color: "#b47c34"},
+              {offset: "50%", color: "#e0f3f3"},
+              {offset: "100%", color: "#005f4f"},
+            ])
+            .enter()
+            .append("stop")
+            .attr("offset", (d) => d.offset)
+            .attr("stop-color", (d) => d.color);
+
+          legend
+            .append("rect")
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .style("fill", "url(#legendGradient)");
+
+          legend
+            .append("text")
+            .attr("x", legendWidth / 2)
+            .attr("y", 35)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "14px")
+            .attr("font-weight", "bold")
+            .text("IMDb rating");
+
+          legend
+            .append("text")
+            .attr("x", 0)
+            .attr("y", legendHeight + 15)
+            .attr("text-anchor", "start")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "12px")
+            .text("4.5");
+
+          legend
+            .append("text")
+            .attr("x", legendWidth)
+            .attr("y", legendHeight + 15)
+            .attr("text-anchor", "end")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "12px")
+            .text("9.8");
+
+          svg
+            .append("text")
+            .attr("x", width / 2)
+            .attr("y", height + 120)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("font-size", "12px")
+            .attr("fill", "#7d7d7d")
+            .text("Map: Edison Wu · Source: IMDb");
+        })
+        .catch(function (error) {
+          console.error("Error loading or processing data: ", error);
+        });
+    </script>
+  </body>
+</html>
