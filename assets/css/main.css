@@ -266,6 +266,10 @@ footer {
   filter: brightness(100%);
 }
 
+.heat-map img {
+  filter: brightness(100%);
+}
+
 .name {
   margin-left: 0;
 }
