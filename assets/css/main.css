@@ -201,6 +201,17 @@ footer {
   vertical-align: middle;
 }
 
+.mapbox {
+  background-color: #000000;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
 .data .box {
   height: 410px;
   border: 1.2px solid #b6b6ab;
