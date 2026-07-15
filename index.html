@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:wght@100..900&family=Roboto:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./assets/css/simple-grid.css" />
@@ -28,26 +28,31 @@
           </h1>
         </div>
         <div class="col-5">
-          <nav>
-            <ul class="navLinks">
+          <nav class="site-nav">
+            <ul class="navLinks navLinks-primary">
               <li>
                 <a href="#data">DATA VIZ</a>
               </li>
               <li>
-                <a href="#3D">3D</a>
-              </li>
-              <li>
-                <a href="https://www.texastribune.org/about/staff/edison-wu/">TRIBUNE</a>
-              </li>
-              <li>
-                <a href="#writing">WRITING</a>
+                <a href="#reporting">REPORTING</a>
               </li>
               <li>
                 <a href="#video">VIDEO</a>
               </li>
+            </ul>
+            <ul class="navLinks navLinks-secondary">
+              <li>
+                <a href="https://www.nytimes.com/2026/07/09/nyregion/nyc-building-collapse-inspection.html" target="_blank">NYT</a>
+              </li>
+              <li>
+                <a href="https://www.bloomberg.com/authors/AX-IWytKGwQ/edison-wu" target="_blank">BLOOMBERG</a>
+              </li>
+              <li>
+                <a href="https://www.texastribune.org/about/staff/edison-wu/" target="_blank">TRIBUNE</a>
+              </li>
               <li>
                 <a
-                  href="https://drive.google.com/file/d/1eENUyXeVYYfPEGbg7Jz8kdBTf--xryuy/view?usp=sharing"
+                  href="https://drive.google.com/file/d/1OWfU9naHQY4_jUK3VWqyrnBaQ3x9qS4P/view?usp=drive_link"
                 >
                   RESUME
                 </a>
@@ -57,35 +62,24 @@
         </div>
       </div>
 
-      <p class="col-6 bio">
-        I'm a data and visuals fellow at
-        <span class="work">
-          <a href="https://www.texastribune.org/about/staff/edison-wu/" target="_blank">
-            The Texas Tribune
-          </a>
-        </span>
-        based in Austin, and a recent graduate of 
-        <span class="work">
-          <a href="https://journalism.berkeley.edu/person/edison-wu/" target="_blank">
-            UC Berkeley Graduate School of Journalism
-          </a>
-        </span>
-        and pursuing a data science certificate.
+      <p id="bio" class="col-6 bio">
+        Edison Wu is a Graphics Intensive journalist at
+        <strong>The New York Times</strong>, where he uses data, graphics, and code to tell stories.
         <br />
-        Previously, I worked as a data researcher at
-        <strong>Investigative Reporting Project</strong>
-        , a multimedia reporter at
-        <span class="work">
-          <a href="https://richmondconfidential.org/author/ewu/" target="_blank">
-            Richmond Confidential
-          </a>
-        </span>
-        , and an international news editor at
-        <strong>Beijing News</strong>
-        . I enjoy data viz, design, development, and storytelling. I speak English and Chinese. In
-        my spare time, I also produce podcasts for the award-winning outlet
-        <strong>Initium Media</strong>
-        .
+        <br />
+        Previously, he worked at
+        <span class="work"><a href="https://www.bloomberg.com/authors/AX-IWytKGwQ/edison-wu" target="_blank">Bloomberg</a></span>,
+        <span class="work"><a href="https://www.texastribune.org/about/staff/edison-wu/" target="_blank">The Texas Tribune</a></span>,
+        the <strong>Investigative Reporting Project</strong>, <strong>Richmond Confidential</strong>
+        and <strong>The Beijing News</strong>.
+        <br />
+        <br />
+        He earned his master's degree from the
+        <span class="work"><a href="https://journalism.berkeley.edu/person/edison-wu/" target="_blank">University of California, Berkeley, Graduate School of Journalism</a></span>.
+        <br />
+        <br />
+        He speaks English and Chinese. In his spare time, he produces podcasts for the award-winning outlet
+        <strong>Initium Media</strong>. His team was a finalist for the 2026 SOPA Awards.
       </p>
 
       <div class="row contact">
@@ -117,36 +111,142 @@
         <div class="row data">
           <article class="col-6 heat-map">
             <div class="box">
-              <a href="https://edisonyzwu.github.io/thesis-project/" target="_blank">
-                <img src="images/thesis.gif" alt="Slipping into America" />
-                <h3>Slipping Into America</h3>
+              <a
+                href="https://www.nytimes.com/2026/07/10/nyregion/nyc-building-conversion-investigation.html"
+                target="_blank"
+              >
+                <img src="images/evacuated.png" alt="Manhattan evacuated building" />
+                <p class="affiliation">The New York Times</p>
+                <h3>Manhattan Evacuated Building</h3>
                 <p class="tool">
-                  <span class="d3">D3.js</span>
-                  <span class="web">HTML CSS JavaScript</span>
-                  <span class="mapbox">Mapbox</span>
-                  <span class="figma">Figma</span>
+                  <span class="illustrator">Illustrator+ai2html</span>
+                  <span class="photoshop">Photoshop</span>
                 </p>
-                <p class="date">May 16 , 2025</p>
+                <p class="date">July 10, 2026</p>
               </a>
             </div>
           </article>
 
-            <article class="col-6 heat-map">
+          <article class="col-6 heat-map">
+            <div class="box">
+              <a
+                href="https://www.nytimes.com/live/2026/07/03/style/taylor-swift-wedding-travis-kelce"
+                target="_blank"
+              >
+                <img src="images/wedding.png" alt="Taylor Swift wedding at Madison Square Garden" />
+                <p class="affiliation">The New York Times</p>
+                <h3>Taylor Swift Wedding Security</h3>
+                <p class="tool">
+                  <span class="illustrator">Illustrator+ai2html</span>
+                </p>
+                <p class="date">July 4, 2026</p>
+              </a>
+            </div>
+          </article>
+
+          <article class="col-6 heat-map">
+            <div class="box">
+              <a
+                href="https://www.nytimes.com/2026/07/01/us/politics/polls-senate-control.html"
+                target="_blank"
+              >
+                <img src="images/states-poll.png" alt="Battleground states Senate race poll" />
+                <p class="affiliation">The New York Times</p>
+                <h3>Battleground States Senate Race Poll</h3>
+                <p class="tool">
+                  <span class="svelte">Svelte</span>
+                </p>
+                <p class="date">July 1, 2026</p>
+              </a>
+            </div>
+          </article>
+
+          <article class="col-6 heat-map">
+            <div class="box">
+              <a
+                href="https://www.nytimes.com/2026/06/29/us/politics/collins-platner-maine-senate-poll.html"
+                target="_blank"
+              >
+                <img src="images/Maine-poll.png" alt="Maine Senate race poll" />
+                <p class="affiliation">The New York Times</p>
+                <h3>Maine Senate Race Poll</h3>
+                <p class="tool">
+                  <span class="svelte">Svelte</span>
+                </p>
+                <p class="date">June 29, 2026</p>
+              </a>
+            </div>
+          </article>
+
+          <article class="col-6 heat-map">
+            <div class="box">
+              <a
+                href="https://www.nytimes.com/2026/06/26/world/asia/china-plane-crash-beijing.html"
+                target="_blank"
+              >
+                <img src="images/Beijing-plane.png" alt="Small Plane Crashes" />
+                <p class="affiliation">The New York Times</p>
+                <h3>Small Plane Crashes Into Tallest Building in Beijing</h3>
+                <p class="tool">
+                  <span class="illustrator">Illustrator+ai2html</span>
+                  <span class="google-earth">Google Earth</span>
+                </p>
+                <p class="date">June 29, 2026</p>
+              </a>
+            </div>
+          </article>
+
+          <article class="col-6 heat-map">
+            <div class="box">
+              <a
+                href="https://www.bloomberg.com/news/features/2026-03-19/new-york-city-office-leases-rebound-as-ai-companies-move-in"
+                target="_blank"
+              >
+                <img src="images/AI-office.gif" alt="The AI boom comes to NYC real estate" />
+                <p class="affiliation">Bloomberg News</p>
+                <h3>The AI Boom Comes to NYC Real Estate</h3>
+                <p class="tool">
+                  <span class="QGIS">QGIS</span>
+                </p>
+                <p class="date">March 19, 2026</p>
+              </a>
+            </div>
+          </article>
+
+          <article class="col-6 heat-map">
+            <div class="box">
+              <a
+                href="https://www.bloomberg.com/news/articles/2026-03-16/data-centers-overtake-offices-in-us-construction-spending-shift"
+                target="_blank"
+              >
+                <img src="images/data-center.gif" alt="Data centers overtake offices in US construction spending" />
+                <p class="affiliation">Bloomberg News</p>
+                <h3>Data Centers Overtake Offices in US Construction-Spending Shift</h3>
+                <p class="tool">
+                  <span class="python">Python</span>
+                </p>
+                <p class="date">March 16, 2026</p>
+              </a>
+            </div>
+          </article>
+
+          <article class="col-6 heat-map">
             <div class="box">
               <a
                 href="https://www.texastribune.org/2025/08/16/texas-staar-scores-lookup/"
                 target="_blank"
               >
-                <img src="images/staar.gif" alt="STAAR scores lookup tool" />
-                <h3>Tribune: STAAR scores lookup tool</h3>
-                <p class="tool">       
+                <img src="images/staar.gif" alt="Texas school test score lookup tool" />
+                <p class="affiliation">Texas Tribune</p>
+                <h3>Look Up Texas School Test Scores</h3>
+                <p class="tool">
                   <span class="d3">D3.js</span>
                   <span class="web">HTML CSS JavaScript</span>
                 </p>
                 <p class="date">Aug 16, 2025</p>
               </a>
             </div>
-           </article>
+          </article>
 
           <article class="col-6 heat-map">
             <div class="box">
@@ -155,7 +255,8 @@
                 target="_blank"
               >
                 <img src="images/camps.gif" alt="Summer camp story" />
-                <h3>More than a dozen summer camps located in flood zones</h3>
+                <p class="affiliation">Texas Tribune</p>
+                <h3>More Than a Dozen Summer Camps Located in Flood Zones</h3>
                 <p class="tool">
                   <span class="illustrator">Illustrator+ai2html</span>
                   <span class="QGIS">QGIS</span>
@@ -172,28 +273,14 @@
                 target="_blank"
               >
                 <img src="images/flood.gif" alt="Flood graphics" />
-                <h3>Tribune: Graphics show the scope of Texas’ floods</h3>
+                <p class="affiliation">Texas Tribune</p>
+                <h3>Graphics Show the Scope of Texas’ Floods</h3>
                 <p class="tool">
                   <span class="illustrator">Illustrator+ai2html</span>
                   <span class="QGIS">QGIS</span>
                   <span class="datawrapper">Datawrapper</span>
                 </p>
                 <p class="date">July 10, 2025</p>
-              </a>
-            </div>
-          </article>
-
-          <article class="col-6 heat-map">
-            <div class="box">
-              <a href="https://edisonyzwu.github.io/interactive/" target="_blank">
-                <img src="images/deportation.gif" alt="Mass Deportation" />
-                <h3>The $315 Billion Question</h3>
-                <p class="tool">
-                  <span class="svelte">Svelte</span>
-                  <span class="d3">D3.js</span>
-                  <span class="figma">Figma</span>
-                </p>
-                <p class="date">Mar. 19, 2025</p>
               </a>
             </div>
           </article>
@@ -208,7 +295,8 @@
                   src="images/legislator.gif"
                   alt="Analysis: The 2025 Texas House, from right to left"
                 />
-                <h3>Tribune: The 2025 Texas House, from right to left</h3>
+                <p class="affiliation">Texas Tribune</p>
+                <h3>The 2025 Texas House, From Right to Left</h3>
                 <p class="tool">
                   <span class="datawrapper">Datawrapper</span>
                 </p>
@@ -217,10 +305,44 @@
             </div>
           </article>
 
+          <article class="col-6 heat-map">
+              <div class="box">
+                <a href="https://edisonyzwu.github.io/thesis-project/" target="_blank">
+                  <img src="images/thesis.gif" alt="Slipping into America" />
+                  <p class="affiliation">J-school</p>
+                <h3>Slipping Into America</h3>
+                  <p class="tool">
+                    <span class="d3">D3.js</span>
+                    <span class="web">HTML CSS JavaScript</span>
+                    <span class="mapbox">Mapbox</span>
+                    <span class="figma">Figma</span>
+                  </p>
+                  <p class="date">May 16 , 2025</p>
+                </a>
+              </div>
+            </article>  
+
+          <article class="col-6 heat-map">
+            <div class="box">
+              <a href="https://edisonyzwu.github.io/interactive/" target="_blank">
+                <img src="images/deportation.gif" alt="Mass Deportation" />
+                <p class="affiliation">J-school</p>
+                <h3>The $315 Billion Question</h3>
+                <p class="tool">
+                  <span class="svelte">Svelte</span>
+                  <span class="d3">D3.js</span>
+                  <span class="figma">Figma</span>
+                </p>
+                <p class="date">Mar. 19, 2025</p>
+              </a>
+            </div>
+          </article>
+
           <article class="col-6 senior">
             <div class="box">
               <a href="https://edisonyzwu.github.io/Traffic-SF/" target="_blank">
                 <img src="images/traffic.gif" alt="Traffic Deaths" />
+                <p class="affiliation">Persona Project</p>
                 <h3>SF Traffic Deaths Remain High 10 Years After "Vision Zero"</h3>
                 <p class="tool">
                   <span class="leaflet">leaflet</span>
@@ -232,39 +354,11 @@
             </div>
           </article>
 
-          <article class="col-6">
-            <div class="box">
-              <a href="https://edisonyzwu.github.io/Chinese-migrants-story/" target="_blank">
-                <img src="images/migrant.gif" alt="cover photo for the migrant story" />
-                <h3>Why More Chinese Are Crossing the Darién Gap</h3>
-                <p class="tool">
-                  <span class="web">HTML CSS JavaScript</span>
-                  <span class="datawrapper">Datawrapper</span>
-                </p>
-                <p class="date">Jan. 13, 2024</p>
-              </a>
-            </div>
-          </article>
-
-          <article class="col-6 stem">
-            <div class="box">
-              <a href="https://edisonyzwu.github.io/STEM-Inequity-Project/ " target="_blank">
-                <img src="images/STEM.gif" alt="cover photo for the STEM story" />
-                <h3>STEM Inequity in America</h3>
-                <p class="tool">
-                  <span class="r">R</span>
-                  <span class="datawrapper">Datawrapper</span>
-                  <span class="web">HTML CSS</span>
-                </p>
-                <p class="date">Apr. 27, 2024</p>
-              </a>
-            </div>
-          </article>
-
           <article class="col-6 heat-map">
             <div class="box">
               <a href="https://edisonyzwu.github.io/nba-coach-timeline/" target="_blank">
                 <img src="images/coach.gif" alt="A Visual Timeline of NBA Coaches’ Career" />
+                <p class="affiliation">Persona Project</p>
                 <h3>A Visual Timeline of NBA Coaches’ Career</h3>
                 <p class="tool">
                   <span class="d3">D3.js</span>
@@ -279,72 +373,12 @@
             <div class="box">
               <a href="https://edisonyzwu.github.io/portfolio/heat-map/" target="_blank">
                 <img src="images/heat-map.gif" alt="heat-map" />
-                <h3>Has Rick and Morty Fallen from Grace?</h3>
+                <p class="affiliation">Persona Project</p>
+                <h3>Has Rick and Morty Fallen From Grace?</h3>
                 <p class="tool">
                   <span class="d3">D3.js</span>
                 </p>
                 <p class="date">Nov. 23, 2024</p>
-              </a>
-            </div>
-          </article>
-
-          <article class="col-6 heat-map">
-            <div class="box">
-              <a href="https://edisonyzwu.github.io/treemap/" target="_blank">
-                <img
-                  src="images/treemap.gif"
-                  alt="Most Fulbright Program Funding Comes from the U.S. State Department"
-                />
-                <h3>Fulbright Funding Primarily from U.S. State Department</h3>
-                <p class="tool">
-                  <span class="d3">D3.js</span>
-                </p>
-                <p class="date">Apr. 22, 2025</p>
-              </a>
-            </div>
-          </article>
-
-          <article class="col-6 senior">
-            <div class="box">
-              <a
-                href="https://edisonyzwu.github.io/portfolio/Chinese-border-seekers/"
-                target="_blank"
-              >
-                <img src="images/border.gif" alt="d3-bar-chart" />
-                <h3>Chinese Migrants at US Border Drops to Yearly Lowest</h3>
-                <p class="tool">
-                  <span class="d3">D3.js</span>
-                </p>
-                <p class="date">Oct. 31, 2024</p>
-              </a>
-            </div>
-          </article>
-
-          <article class="col-6 senior">
-            <div class="box">
-              <a href="https://edisonyzwu.github.io/d3-bar-chart/" target="_blank">
-                <img src="images/bar-chart.gif" alt="Bar chart" />
-                <h3>Occupational Distribution of Chinese Travelers to Ecuador</h3>
-                <p class="tool">
-                  <span class="d3">D3.js</span>
-                </p>
-                <p class="date">Oct. 21, 2024</p>
-              </a>
-            </div>
-          </article>
-
-          <article class="col-6 senior">
-            <div class="box">
-              <a
-                href="https://edisonyzwu.github.io/line-chart-metric-senior-crime/"
-                target="_blank"
-              >
-                <img src="images/senior.gif" alt="Crime chart" />
-                <h3>Rising Crime Rates Against Seniors in California</h3>
-                <p class="tool">
-                  <span class="d3">D3.js</span>
-                </p>
-                <p class="date">Sep. 26, 2024</p>
               </a>
             </div>
           </article>
@@ -356,6 +390,7 @@
                 target="_blank"
               >
                 <img src="images/tableau-children.gif" alt="tableau-children" />
+                <p class="affiliation">Persona Project</p>
                 <h3>Saving Children</h3>
                 <p class="tool">
                   <span class="tableau">Tableau</span>
@@ -372,6 +407,7 @@
                 target="_blank"
               >
                 <img src="images/tableau-Charts.gif" alt="tableau-Charts" />
+                <p class="affiliation">Persona Project</p>
                 <h3>Olympic Swimming Records</h3>
                 <p class="tool">
                   <span class="tableau">Tableau</span>
@@ -388,7 +424,8 @@
                 target="_blank"
               >
                 <img src="images/tableau-Maps.gif" alt="tableau-map" />
-                <h3>Map of countries by GDP per capita</h3>
+                <p class="affiliation">Persona Project</p>
+                <h3>Map of Countries by GDP per Capita</h3>
                 <p class="tool">
                   <span class="tableau">Tableau</span>
                 </p>
@@ -406,6 +443,7 @@
             <div class="box">
               <a href="https://edisonyzwu.github.io/portfolio/d3-globe-chart/" target="_blank">
                 <img src="images/globe.gif" alt="d3-globe-chart" />
+                <p class="affiliation">Persona Project</p>
                 <h3>The Global Journey of Chinese Asylum Seekers</h3>
                 <p class="tool">
                   <span class="d3">D3.js</span>
@@ -417,19 +455,42 @@
         </div> 
 
 
-        <h2 id="writing">WRITING</h2>
+        <h2 id="reporting">REPORTING</h2>
 
         <div class="row others-writing">
           <article class="col-6">
             <div class="box">
               <a
-                href="https://docs.google.com/document/d/1IPAdEiB9DIJILx3-M2CqcWX3OWyEp7P4YLAyX-zogPQ/edit?usp=sharing"
+                href="https://www.bloomberg.com/news/features/2026-03-19/new-york-city-office-leases-rebound-as-ai-companies-move-in"
                 target="_blank"
               >
-                <img src="images/terminal.png" alt="a Bloomberg Terminal Screenshot" />
-                <h3>Bloomberg Business Reporting Capstone</h3>
-                <p>Skills: Bloomberg Terminal, The Bloomberg Way</p>
-                <p class="date">Apr, 2025</p>
+                <img src="images/AI-office.gif" alt="The AI boom comes to NYC real estate" />
+                <p class="affiliation">Bloomberg News</p>
+                <h3>The AI Boom Comes to NYC Real Estate</h3>
+                <p class="tool">
+                  <span class="interview">Interview</span>
+                  <span class="data-analysis">Data Analysis</span>
+                </p>
+                <p class="date">March 19, 2026</p>
+              </a>
+            </div>
+          </article>
+
+          <article class="col-6">
+            <div class="box">
+              <a
+                href="https://www.bloomberg.com/news/articles/2026-03-16/data-centers-overtake-offices-in-us-construction-spending-shift"
+                target="_blank"
+              >
+                <img src="images/data-center.gif" alt="Data centers overtake offices in US construction spending" />
+                <p class="affiliation">Bloomberg News</p>
+                <h3>Data Centers Overtake Offices in US Construction-Spending Shift</h3>
+                <p class="tool">
+                  <span class="interview">Interview</span>
+                  <span class="writing-skill">Writing</span>
+                  <span class="data-analysis">Data Analysis</span>
+                </p>
+                <p class="date">March 16, 2026</p>
               </a>
             </div>
           </article>
@@ -441,10 +502,12 @@
                 target="_blank"
               >
                 <img src="images/tree.jpg" alt="cover photo for the tree story" />
-                <h3>
-                  What’s being done to bring equitable tree coverage to Richmond neighborhoods?
-                </h3>
-                <p>Skills: FOIA, data analysis</p>
+                <p class="affiliation">Richmond Confidential</p>
+                <h3>What’s Being Done to Bring Equitable Tree Coverage to Richmond Neighborhoods?</h3>
+                <p class="tool">
+                  <span class="foia">FOIA</span>
+                  <span class="data-analysis">Data Analysis</span>
+                </p>
                 <p class="date">Dec. 10, 2023</p>
               </a>
             </div>
@@ -458,8 +521,11 @@
               >
                 <img src="images/dumping-2.jpg" alt="cover photo for the illegal dumping story" />
 
-                <h3>Richmond installing cameras to crack down on illegal dumping</h3>
-                <p>Skills: news reporting under tight deadlines</p>
+                <p class="affiliation">Richmond Confidential</p>
+                <h3>Richmond Installing Cameras to Crack Down on Illegal Dumping</h3>
+                <p class="tool">
+                  <span class="reporting-deadline">Tight-Deadline Reporting</span>
+                </p>
                 <p class="date">Sep. 21, 2023</p>
               </a>
             </div>
@@ -473,8 +539,12 @@
             <div class="box">
               <a href="https://www.youtube.com/watch?v=6snrUci8tD4&t=3s" target="_blank">
                 <img src="images/covid expert-2.jpg" alt="cover photo for the expert story" />
-                <h3>When a Covid expert’s son got Covid</h3>
-                <p>Skills: script writing, video editing</p>
+                <p class="affiliation">The Beijing News</p>
+                <h3>When a Covid Expert’s Son Got Covid</h3>
+                <p class="tool">
+                  <span class="script-writing">Script Writing</span>
+                  <span class="video-editing">Video Editing</span>
+                </p>
                 <p class="date">Jan. 21, 2022</p>
               </a>
             </div>
@@ -485,8 +555,12 @@
               <a href="https://www.youtube.com/watch?v=AWPg3BsfMlc" target="_blank">
                 <img src="images/election-2.jpg" alt="cover photo for the election story" />
 
-                <h3>The history behind U.S. presidential inaugurations</h3>
-                <p>Skills: video editing, animation</p>
+                <p class="affiliation">The Beijing News</p>
+                <h3>The History Behind U.S. Presidential Inaugurations</h3>
+                <p class="tool">
+                  <span class="video-editing">Video Editing</span>
+                  <span class="animation">Animation</span>
+                </p>
                 <p class="date">Feb. 9, 2021</p>
               </a>
             </div>
@@ -499,8 +573,12 @@
               <a href="https://www.youtube.com/watch?v=BfU9EmIkNJY&t=3s" target="_blank">
                 <img src="images/GameStop-2.jpg" alt="cover photo for the gamestop story" />
 
-                <h3>How retail investors versus Wall Street</h3>
-                <p>Skills: script writing, video editing</p>
+                <p class="affiliation">The Beijing News</p>
+                <h3>How Retail Investors Versus Wall Street</h3>
+                <p class="tool">
+                  <span class="script-writing">Script Writing</span>
+                  <span class="video-editing">Video Editing</span>
+                </p>
                 <p class="date">Jan. 29, 2021</p>
               </a>
             </div>
@@ -511,8 +589,12 @@
               <a href="https://www.youtube.com/watch?v=4AR3NF0seWM" target="_blank">
                 <img src="images/Chernobyl-2.jpg" alt="cover photo for the chernobyl story" />
 
+                <p class="affiliation">The Beijing News</p>
                 <h3>Revisiting Chernobyl 35 Years Since the Nuclear Disaster</h3>
-                <p>Skills: script writing, video editing</p>
+                <p class="tool">
+                  <span class="script-writing">Script Writing</span>
+                  <span class="video-editing">Video Editing</span>
+                </p>
                 <p class="date">Jan. 29, 2021</p>
               </a>
             </div>

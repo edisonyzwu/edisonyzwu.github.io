@@ -33,8 +33,15 @@ h2 {
 }
 
 h3 {
+  font-family: "Roboto", sans-serif;
   margin-bottom: 0;
-  margin-top: 1rem;
+  margin-top: 0.4rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.box h3 {
+  margin-top: 0.4rem;
 }
 
 li {
@@ -80,11 +87,22 @@ footer {
   background-color: rgb(243, 248, 233);
 }
 
-.navLinks {
+.site-nav {
   float: right;
+  margin-top: 4.3rem;
+  text-align: right;
+}
+
+.navLinks {
+  float: none;
   list-style-type: none;
   font-family: "Roboto Mono", monospace;
-  margin-top: 4.3rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navLinks-secondary {
+  margin-top: 0.35rem;
 }
 
 .navLinks li {
@@ -92,11 +110,19 @@ footer {
   font-size: 0.8rem;
 }
 
-.navLinks a {
+.navLinks a,
+.navLinks .nav-label {
   color: black;
   text-decoration: none;
   padding: 0.1rem;
   margin: 0.1rem;
+}
+
+.navLinks .nav-label {
+  display: inline-block;
+  background-color: transparent;
+  color: black;
+  font-weight: 400;
 }
 
 .navLinks a:hover {
@@ -245,44 +271,128 @@ footer {
   vertical-align: middle;
 }
 
-.data .box {
-  height: 410px;
+.python {
+  background-color: #3776ab;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
+.photoshop {
+  background-color: #31a8ff;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
+.google-earth {
+  background-color: #34a853;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
+.interview {
+  background-color: #5c4d7d;
+}
+
+.data-analysis {
+  background-color: #1e81a2;
+}
+
+.writing-skill {
+  background-color: #a83232;
+}
+
+.foia {
+  background-color: #4a5568;
+}
+
+.reporting-deadline {
+  background-color: #8b5a2b;
+}
+
+.script-writing {
+  background-color: #6b3fa0;
+}
+
+.video-editing {
+  background-color: #1a8a6a;
+}
+
+.animation {
+  background-color: #d46434;
+}
+
+.interview,
+.data-analysis,
+.writing-skill,
+.foia,
+.reporting-deadline,
+.script-writing,
+.video-editing,
+.animation {
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
+.data .box,
+.three-d .box,
+.others-writing .box,
+.others-video .box {
   border: 1.2px solid #b6b6ab;
   box-shadow: 0px 1px #b6b6ab;
   box-sizing: border-box;
   padding: 10px;
-  object-fit: cover;
   transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.box > a {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+}
+
+.box .date {
+  margin-top: auto;
+  padding-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.data .box {
+  min-height: 410px;
 }
 
 .three-d .box {
-  height: 450px;
-  border: 1.2px solid #b6b6ab;
-  box-shadow: 0px 1px #b6b6ab;
-  box-sizing: border-box;
-  padding: 10px;
-  object-fit: cover;
-  transition: transform 0.2s ease;
+  min-height: 450px;
 }
 
 .others-writing .box {
-  height: 450px;
-  border: 1.2px solid #b6b6ab;
-  box-shadow: 0px 1px #b6b6ab;
-  box-sizing: border-box;
-  padding: 10px;
-  object-fit: cover;
-  transition: transform 0.2s ease;
+  min-height: 450px;
 }
 
 .others-video .box {
-  height: 430px;
-  border: 1.2px solid #b6b6ab;
-  box-shadow: 0px 1px #b6b6ab;
-  box-sizing: border-box;
-  padding: 10px;
-  object-fit: cover;
-  transition: transform 0.2s ease;
+  min-height: 430px;
 }
 
 .box:hover {
@@ -290,8 +400,13 @@ footer {
 }
 
 .box img {
+  display: block;
+  width: 100%;
   height: 270px;
   object-fit: cover;
+  border: 1px solid #f0f0ec;
+  box-shadow: none;
+  box-sizing: border-box;
 }
 
 .name {
@@ -370,8 +485,24 @@ footer {
   animation: gradient-animation 10s linear infinite;
 }
 
+.affiliation {
+  display: block;
+  width: fit-content;
+  align-self: flex-start;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: black;
+  margin: 0.85rem 0 0;
+  line-height: 1.2;
+}
+
 .date {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: rgb(150, 150, 150);
   margin: 0;
 }
 
@@ -383,7 +514,7 @@ footer {
 }
 
 #data,
-#writing,
+#reporting,
 #video {
   font-weight: 400;
   border-color: #000;
@@ -392,6 +523,75 @@ footer {
   margin-top: 2rem;
   margin-bottom: 2rem;
   padding-right: 2rem;
+}
+
+@media only screen and (min-width: 45em) {
+  .row.data,
+  .row.three-d,
+  .row.others-writing,
+  .row.others-video {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 2%;
+  }
+
+  .row.data > article,
+  .row.three-d > article,
+  .row.others-writing > article,
+  .row.others-video > article {
+    float: none;
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+    display: flex;
+  }
+
+  .row.data > article .box,
+  .row.three-d > article .box,
+  .row.others-writing > article .box,
+  .row.others-video > article .box {
+    width: 100%;
+    flex: 1;
+  }
+}
+
+@media only screen and (max-width: 44.99em) {
+  .site-nav {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .navLinks {
+    display: block;
+  }
+
+  .navLinks-secondary {
+    margin-top: 0.35rem;
+  }
+
+  .navLinks li {
+    font-size: 0.8rem;
+  }
+
+  #bio.bio {
+    margin-top: 0.5rem;
+  }
+
+  .data .box,
+  .three-d .box,
+  .others-writing .box,
+  .others-video .box {
+    min-height: 0;
+  }
+
+  .box > a {
+    min-height: auto;
+  }
+
+  .box .date {
+    margin-top: 0.35rem;
+  }
 }
 
 @media only screen and (min-width: 300px) {
@@ -411,10 +611,10 @@ footer {
     margin-bottom: 0;
   }
 
-  .navLinks {
+  .site-nav {
     margin-top: 0.5rem;
     float: left;
-    padding-left: 0;
+    text-align: left;
   }
 
   .row [class^="col-6"] {
@@ -424,10 +624,6 @@ footer {
   .bio {
     width: 400px;
   }
-
-  .box {
-    height: 480px;
-  }
 }
 
 @media only screen and (min-width: 640px) {
@@ -436,10 +632,10 @@ footer {
     padding: 0;
   }
 
-  .navLinks {
+  .site-nav {
     margin-top: 0.5rem;
     float: left;
-    padding-left: 0;
+    text-align: left;
   }
 
   .bio {
@@ -453,10 +649,10 @@ footer {
 }
 
 @media only screen and (min-width: 850px) {
-  .navLinks {
+  .site-nav {
     float: left;
-    list-style-type: none;
-    font-family: "Roboto Mono", monospace;
+    margin-top: 0.5rem;
+    text-align: left;
   }
 
   .col-7,
@@ -475,11 +671,10 @@ footer {
     margin-bottom: 3rem;
   }
 
-  .navLinks {
+  .site-nav {
     float: right;
-    list-style-type: none;
-    font-family: "Roboto Mono", monospace;
     margin-top: 4rem;
+    text-align: right;
   }
 
   .bio {
