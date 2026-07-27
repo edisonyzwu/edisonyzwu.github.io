@@ -304,6 +304,28 @@ footer {
   vertical-align: middle;
 }
 
+.tool span.google-maps {
+  background-color: #4285f4;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
+.tool span.mapmaker {
+  background-color: #ea4335;
+  border-radius: 3px;
+  padding: 1.75px;
+  padding-left: 5.2px;
+  padding-right: 5.2px;
+  margin-right: 0.7%;
+  line-height: 100%;
+  vertical-align: middle;
+}
+
 .interview {
   background-color: #5c4d7d;
 }
