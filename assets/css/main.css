@@ -337,15 +337,25 @@ footer {
   font-family: var(--font-intro);
 }
 
-@keyframes gradient-animation {
-  0% {
-    background-position: 0% 50%;
+@keyframes name-flow {
+  0%,
+  100% {
+    background-image: linear-gradient(
+      120deg,
+      #6e8fa3 0%,
+      #7a96ae 35%,
+      #8aa0b4 65%,
+      #a8b8c8 100%
+    );
   }
   50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+    background-image: linear-gradient(
+      120deg,
+      #b8847e 0%,
+      #6f9a94 35%,
+      #c9a39e 65%,
+      #d4b0ab 100%
+    );
   }
 }
 
@@ -694,18 +704,18 @@ footer {
   font-weight: 700;
   background-image: linear-gradient(
     120deg,
-    #7a96ae 0%,
-    #6e8fa3 25%,
-    #8fb5af 50%,
-    #c9a39e 75%,
+    #6e8fa3 0%,
+    #7a96ae 35%,
+    #8aa0b4 65%,
     #a8b8c8 100%
   );
-  background-size: 260% auto;
+  background-size: 100% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: gradient-animation 14s ease infinite;
+  /* Match atmosphere wash / orb hue cycle */
+  animation: name-flow 36s ease-in-out infinite;
 }
 
 .affiliation {
@@ -955,6 +965,16 @@ footer {
   .dynamic-gradient,
   footer {
     animation: none;
+  }
+
+  .dynamic-gradient,
+  footer {
+    background-image: linear-gradient(
+      120deg,
+      #6e8fa3 0%,
+      #7a96ae 50%,
+      #a8b8c8 100%
+    );
   }
 
   .box:hover {
