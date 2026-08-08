@@ -7,21 +7,25 @@
     <meta name="description" content="Edison Wu's portfolio website" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:wght@100..900&family=Roboto:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link href="https://fonts.cdnfonts.com/css/hall-fetica-decompose" rel="stylesheet" />
     <link rel="stylesheet" href="./assets/css/simple-grid.css" />
     <link rel="stylesheet" href="./assets/css/main.css" />
     <link rel="icon" href="/images/headshot.png" />
   </head>
   <body>
+    <div class="atmosphere" aria-hidden="true">
+      <span class="orb orb-a"></span>
+      <span class="orb orb-b"></span>
+      <span class="orb orb-c"></span>
+    </div>
     <div class="container">
       <div class="row first">
-        <div class="col-7 name dynamic-gradient">
-          <h1>
+        <div class="col-7 name">
+          <h1 class="dynamic-gradient">
             Hi, I’m
             <br />
             Edison Wu
@@ -64,14 +68,14 @@
 
       <p id="bio" class="col-6 bio">
         Edison Wu is a Graphics Intensive journalist at
-        <strong>The New York Times</strong>, where he uses data, graphics, and code to tell stories.
+        <span class="work"><a href="https://www.nytimes.com/by/edison-wu" target="_blank">The New York Times</a></span>, where he uses data, graphics, and code to tell stories.
         <br />
         <br />
         Previously, he worked at
         <span class="work"><a href="https://www.bloomberg.com/authors/AX-IWytKGwQ/edison-wu" target="_blank">Bloomberg</a></span>,
         <span class="work"><a href="https://www.texastribune.org/about/staff/edison-wu/" target="_blank">The Texas Tribune</a></span>,
-        the <strong>Investigative Reporting Project</strong>, <strong>Richmond Confidential</strong>
-        and <strong>The Beijing News</strong>.
+        the <span class="work">Investigative Reporting Project</span>, <span class="work">Richmond Confidential</span>
+        and <span class="work">The Beijing News</span>.
         <br />
         <br />
         He earned his master's degree from the
@@ -79,7 +83,7 @@
         <br />
         <br />
         He speaks English and Chinese. In his spare time, he produces podcasts for the award-winning outlet
-        <strong>Initium Media</strong>. His team was a finalist for the 2026 SOPA Awards.
+        <span class="work">Initium Media</span>. His team was a finalist for the 2026 SOPA Awards.
       </p>
 
       <div class="row contact">
@@ -633,7 +637,7 @@
           </article>
         </div>
       </main>
-      <footer>© Copyright 2024 - Edison Wu</footer>
+      <footer>© Copyright 2026 - Edison Wu</footer>
     </div>
   </body>
 </html>
