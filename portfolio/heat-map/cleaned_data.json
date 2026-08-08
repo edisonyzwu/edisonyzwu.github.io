@@ -424,5 +424,131 @@
     "episode": "10",
     "title": "Fear No Mort",
     "imdb_rating": "9.4"
+  },
+  {
+    "season": "8",
+    "episode": "1",
+    "title": "Summer of All Fears",
+    "imdb_rating": "8.3"
+  },
+  {
+    "season": "8",
+    "episode": "2",
+    "title": "Valkyrick",
+    "imdb_rating": "7.1"
+  },
+  {
+    "season": "8",
+    "episode": "3",
+    "title": "The Rick",
+    "imdb_rating": " The Mort & The Ugly",
+    "null": [
+      "7.9"
+    ]
+  },
+  {
+    "season": "8",
+    "episode": "4",
+    "title": "The Last Temptation of Jerry",
+    "imdb_rating": "6.3"
+  },
+  {
+    "season": "8",
+    "episode": "5",
+    "title": "Cryo Mort a Rickver",
+    "imdb_rating": "7.1"
+  },
+  {
+    "season": "8",
+    "episode": "6",
+    "title": "The Curicksous Case of Bethjamin Button",
+    "imdb_rating": "7.4"
+  },
+  {
+    "season": "8",
+    "episode": "7",
+    "title": "Ricker Than Fiction",
+    "imdb_rating": "6.7"
+  },
+  {
+    "season": "8",
+    "episode": "8",
+    "title": "Nomortland",
+    "imdb_rating": "8"
+  },
+  {
+    "season": "8",
+    "episode": "9",
+    "title": "Morty Daddy",
+    "imdb_rating": "6.6"
+  },
+  {
+    "season": "8",
+    "episode": "10",
+    "title": "Hot Rick",
+    "imdb_rating": "8.9"
+  },
+  {
+    "season": "9",
+    "episode": "1",
+    "title": "There's Something About Morty",
+    "imdb_rating": "8.8"
+  },
+  {
+    "season": "9",
+    "episode": "2",
+    "title": "Ricks Days",
+    "imdb_rating": " Seven Nights",
+    "null": [
+      "8.8"
+    ]
+  },
+  {
+    "season": "9",
+    "episode": "3",
+    "title": "Rick Fu Hustle",
+    "imdb_rating": "7.1"
+  },
+  {
+    "season": "9",
+    "episode": "4",
+    "title": "A Ricker Runs Through It",
+    "imdb_rating": "7.5"
+  },
+  {
+    "season": "9",
+    "episode": "5",
+    "title": "Jer Bud",
+    "imdb_rating": "7.6"
+  },
+  {
+    "season": "9",
+    "episode": "6",
+    "title": "Erickerhead",
+    "imdb_rating": "8"
+  },
+  {
+    "season": "9",
+    "episode": "7",
+    "title": "Mortgully: The Last Rickforest",
+    "imdb_rating": "9.2"
+  },
+  {
+    "season": "9",
+    "episode": "8",
+    "title": "Rickuiem Mort a Dream",
+    "imdb_rating": "8.3"
+  },
+  {
+    "season": "9",
+    "episode": "9",
+    "title": "Salute Your Morts",
+    "imdb_rating": "7.5"
+  },
+  {
+    "season": "9",
+    "episode": "10",
+    "title": "Field of Dreams",
+    "imdb_rating": "9.3"
   }
 ]

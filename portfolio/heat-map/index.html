@@ -3,270 +3,684 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rick and Morty Episode Ratings Heatmap</title>
+    <title>Wubba Lubba Dub Dub — Rick and Morty Episode Ratings</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&family=Share+Tech+Mono&display=swap"
       rel="stylesheet"
     />
     <style>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
+      :root {
+        --void: #070b14;
+        --lab: #0d1b2a;
+        --portal: #97ce4c;
+        --portal-deep: #39ff14;
+        --rick: #44c8f5;
+        --morty: #f8e71c;
+        --pickle: #2d6a4f;
+        --mud: #8b5a2b;
+        --ink: #e8f7ff;
+        --muted: #8aa4b8;
       }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family: "Share Tech Mono", ui-monospace, monospace;
+        background:
+          radial-gradient(ellipse 80% 50% at 50% -10%, rgba(68, 200, 245, 0.18), transparent 55%),
+          radial-gradient(circle at 85% 70%, rgba(151, 206, 76, 0.16), transparent 40%),
+          radial-gradient(circle at 10% 80%, rgba(248, 231, 28, 0.08), transparent 35%),
+          linear-gradient(180deg, #050810 0%, #0d1b2a 45%, #071018 100%);
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.55), transparent),
+          radial-gradient(1px 1px at 70% 20%, rgba(255, 255, 255, 0.4), transparent),
+          radial-gradient(1.5px 1.5px at 40% 70%, rgba(151, 206, 76, 0.5), transparent),
+          radial-gradient(1px 1px at 90% 50%, rgba(68, 200, 245, 0.45), transparent),
+          radial-gradient(1px 1px at 15% 85%, rgba(255, 255, 255, 0.35), transparent),
+          radial-gradient(1px 1px at 55% 40%, rgba(255, 255, 255, 0.3), transparent);
+        opacity: 0.7;
+        z-index: 0;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 36px 20px 64px;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .kicker {
+        display: inline-block;
+        font-family: "Bangers", system-ui, sans-serif;
+        letter-spacing: 0.18em;
+        font-size: 0.85rem;
+        color: var(--portal);
+        text-shadow: 0 0 12px rgba(151, 206, 76, 0.55);
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Luckiest Guy", system-ui, sans-serif;
+        font-size: clamp(2rem, 6vw, 3.4rem);
+        line-height: 1.05;
+        color: var(--rick);
+        -webkit-text-stroke: 2px #031018;
+        paint-order: stroke fill;
+        text-shadow:
+          3px 3px 0 #031018,
+          0 0 24px rgba(68, 200, 245, 0.45);
+      }
+
+      .dek {
+        max-width: 38rem;
+        margin: 14px auto 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .dek strong {
+        color: var(--morty);
+        font-weight: 400;
+      }
+
+      .portal-gun {
+        display: block;
+        width: min(200px, 58vw);
+        height: auto;
+        margin: 18px auto 6px;
+        filter: drop-shadow(0 0 14px rgba(151, 206, 76, 0.45));
+      }
+
+      .portal-gun .glow {
+        transform-origin: 28px 42px;
+        animation: portal-pulse 1.8s ease-in-out infinite;
+      }
+
+      .portal-gun .muzzle-core {
+        animation: muzzle-flicker 1.2s ease-in-out infinite;
+      }
+
+      @keyframes portal-pulse {
+        0%,
+        100% {
+          opacity: 0.55;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.12);
+        }
+      }
+
+      @keyframes muzzle-flicker {
+        0%,
+        100% {
+          opacity: 0.85;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .chart-shell {
+        margin-top: 18px;
+        padding: 18px 12px 10px;
+        border: 2px solid rgba(151, 206, 76, 0.45);
+        background: linear-gradient(180deg, rgba(13, 27, 42, 0.92), rgba(7, 11, 20, 0.95));
+        box-shadow:
+          0 0 0 4px rgba(3, 16, 24, 0.8),
+          0 0 40px rgba(68, 200, 245, 0.12);
+        overflow-x: auto;
+      }
+
       #chart-container {
         display: flex;
         justify-content: center;
-        align-items: center;
-        padding: 20px;
+        min-width: min-content;
       }
-      .heatmap text {
-        font-size: 10px;
-        fill: #333;
+
+      .cell {
+        stroke: rgba(7, 11, 20, 0.85);
+        stroke-width: 2;
+        cursor: pointer;
+        transition: filter 0.15s ease, stroke 0.15s ease;
       }
-      .tooltip {
-        position: absolute;
-        text-align: left;
-        width: 200px;
-        padding: 10px;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        pointer-events: none;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        font-family: Arial, sans-serif;
-        opacity: 1;
+
+      .cell:hover,
+      .cell.is-hot {
+        filter: brightness(1.18) saturate(1.15);
+        stroke: var(--morty);
+        stroke-width: 2.5;
       }
-      .tooltip .title {
-        font-size: 14px;
-        font-weight: bold;
-        margin-bottom: 5px;
+
+      .axis-label {
+        fill: var(--muted);
+        font-family: "Share Tech Mono", monospace;
+        font-size: 11px;
       }
-      .tooltip .rating {
-        font-weight: bold;
-      }
+
       .title-text {
         font-family: "Luckiest Guy", cursive;
-        fill: #00b5e2;
-        stroke: #002f35;
-        stroke-width: 1px;
+        fill: var(--rick);
+        stroke: #031018;
+        stroke-width: 1.25px;
+        paint-order: stroke fill;
+      }
+
+      .subtitle-text {
+        fill: var(--muted);
+        font-family: "Share Tech Mono", monospace;
+        font-size: 12px;
+      }
+
+      .anno-text {
+        fill: var(--portal);
+        font-family: "Bangers", sans-serif;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+
+      .footer-note {
+        text-align: center;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .footer-note a {
+        color: var(--rick);
+      }
+
+      .tooltip {
+        position: absolute;
+        z-index: 20;
+        width: 230px;
+        padding: 12px 12px 10px;
+        pointer-events: none;
+        opacity: 0;
+        background: linear-gradient(160deg, #102536, #0a1622);
+        border: 2px solid var(--portal);
+        box-shadow:
+          0 0 0 3px #031018,
+          0 0 22px rgba(151, 206, 76, 0.35);
+        font-family: "Share Tech Mono", monospace;
+        color: var(--ink);
+      }
+
+      .tooltip .ep {
+        font-family: "Bangers", sans-serif;
+        letter-spacing: 0.06em;
+        color: var(--rick);
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+      }
+
+      .tooltip .title {
+        font-size: 0.92rem;
+        color: var(--morty);
+        margin-bottom: 8px;
+        line-height: 1.25;
+      }
+
+      .tooltip .rating {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .tooltip .rating strong {
+        color: var(--portal-deep);
+        font-size: 1.15rem;
+        text-shadow: 0 0 10px rgba(57, 255, 20, 0.45);
+      }
+
+      @media (max-width: 700px) {
+        .page {
+          padding: 24px 10px 48px;
+        }
+
+        h1 {
+          -webkit-text-stroke: 1.5px #031018;
+        }
       }
     </style>
   </head>
   <body>
-    <div id="chart-container">
-      <div id="tooltip" class="tooltip" style="opacity: 0"></div>
-    </div>
+    <main class="page">
+      <header class="hero">
+        <div class="kicker">DIMENSION C-137 · IMDb HEATMAP</div>
+        <h1>Has Rick and Morty<br />Fallen from Grace?</h1>
+        <p class="dek">
+          Every episode from seasons 1–9, colored by IMDb score. Early seasons run hot and green;
+          later ones get <strong>weirder, riskier, and more uneven</strong>.
+        </p>
+        <svg
+          class="portal-gun"
+          viewBox="0 0 220 110"
+          role="img"
+          aria-label="Rick's portal gun"
+        >
+          <!-- soft green blast glow -->
+          <ellipse class="glow" cx="28" cy="42" rx="26" ry="22" fill="#39ff14" opacity="0.35" />
+          <ellipse class="glow" cx="28" cy="42" rx="16" ry="13" fill="#97ce4c" opacity="0.55" />
+
+          <!-- barrel housing -->
+          <path
+            d="M48 28 h78 a10 10 0 0 1 10 10 v16 a10 10 0 0 1-10 10 H48 z"
+            fill="#9aa3ad"
+            stroke="#2a323a"
+            stroke-width="2.5"
+          />
+          <rect x="58" y="34" width="62" height="8" rx="2" fill="#6d7680" />
+          <rect x="58" y="50" width="48" height="6" rx="2" fill="#6d7680" />
+
+          <!-- green energy chamber -->
+          <rect x="72" y="42" width="36" height="10" rx="3" fill="#1f3d24" stroke="#97ce4c" stroke-width="1.5" />
+          <rect class="muzzle-core" x="76" y="44.5" width="28" height="5" rx="2" fill="#39ff14" />
+
+          <!-- muzzle tip -->
+          <path
+            d="M38 34 h14 v28 H38 c-6 0-12-6-12-14 s6-14 12-14 z"
+            fill="#7d8792"
+            stroke="#2a323a"
+            stroke-width="2.5"
+          />
+          <ellipse class="muzzle-core" cx="28" cy="42" rx="7" ry="9" fill="#97ce4c" stroke="#39ff14" stroke-width="2" />
+          <ellipse cx="28" cy="42" rx="3.5" ry="4.5" fill="#e8ffe0" />
+
+          <!-- rear body / tank -->
+          <path
+            d="M136 30 h34 a14 14 0 0 1 14 14 v12 a14 14 0 0 1-14 14 h-34 z"
+            fill="#b8c0c8"
+            stroke="#2a323a"
+            stroke-width="2.5"
+          />
+          <circle cx="168" cy="48" r="10" fill="#44c8f5" stroke="#1a6f8c" stroke-width="2" />
+          <circle cx="168" cy="48" r="4" fill="#d7f6ff" />
+          <circle cx="148" cy="40" r="3" fill="#f8e71c" stroke="#2a323a" stroke-width="1.2" />
+          <circle cx="148" cy="56" r="3" fill="#e4572e" stroke="#2a323a" stroke-width="1.2" />
+
+          <!-- grip -->
+          <path
+            d="M118 64 l10 2 8 28 c1 4-2 7-6 7 h-12 c-4 0-7-3-6-7 l6-30 z"
+            fill="#6b5544"
+            stroke="#2a323a"
+            stroke-width="2.5"
+          />
+          <path
+            d="M126 66 l6 1 5 20 h-10 z"
+            fill="#8a7260"
+          />
+
+          <!-- trigger guard -->
+          <path
+            d="M112 64 h16 v10 h-8 a6 6 0 0 1-6-6 z"
+            fill="none"
+            stroke="#2a323a"
+            stroke-width="2.5"
+            stroke-linejoin="round"
+          />
+          <rect x="118" y="66" width="3" height="8" rx="1" fill="#3a424a" />
+
+          <!-- top sight -->
+          <rect x="96" y="22" width="18" height="8" rx="2" fill="#7d8792" stroke="#2a323a" stroke-width="2" />
+        </svg>
+      </header>
+
+      <section class="chart-shell" aria-label="Rick and Morty episode ratings heatmap">
+        <div id="chart-container">
+          <div id="tooltip" class="tooltip"></div>
+        </div>
+      </section>
+
+      <p class="footer-note">
+        Map: Edison Wu · Source: IMDb · Data through Season 9 (2026)
+      </p>
+    </main>
+
     <script>
-      d3.json("cleaned_data.json")
-        .then(function (data) {
-          if (!Array.isArray(data)) {
-            console.error("Data is not in expected format (array)");
-            return;
-          }
+      // Embedded so the chart works over file:// (fetching JSON is blocked locally)
+      const DATA = [
+        { season: "1", episode: "1", title: "Pilot", imdb_rating: "7.9" },
+        { season: "1", episode: "2", title: "Lawnmower Dog", imdb_rating: "8.6" },
+        { season: "1", episode: "3", title: "Anatomy Park", imdb_rating: "8.3" },
+        { season: "1", episode: "4", title: "M. Night Shaym-Aliens!", imdb_rating: "8.6" },
+        { season: "1", episode: "5", title: "Meeseeks and Destroy", imdb_rating: "9" },
+        { season: "1", episode: "6", title: "Rick Potion #9", imdb_rating: "9" },
+        { season: "1", episode: "7", title: "Raising Gazorpazorp", imdb_rating: "7.9" },
+        { season: "1", episode: "8", title: "Rixty Minutes", imdb_rating: "8.7" },
+        { season: "1", episode: "9", title: "Something Ricked This Way Comes", imdb_rating: "8.4" },
+        { season: "1", episode: "10", title: "Close Rick-counters of the Rick Kind", imdb_rating: "9.3" },
+        { season: "1", episode: "11", title: "Ricksy Business", imdb_rating: "8.4" },
+        { season: "2", episode: "1", title: "A Rickle in Time", imdb_rating: "8.8" },
+        { season: "2", episode: "2", title: "Mortynight Run", imdb_rating: "8.8" },
+        { season: "2", episode: "3", title: "Auto Erotic Assimilation", imdb_rating: "8.5" },
+        { season: "2", episode: "4", title: "Total Rickall", imdb_rating: "9.5" },
+        { season: "2", episode: "5", title: "Get Schwifty", imdb_rating: "8.2" },
+        { season: "2", episode: "6", title: "The Ricks Must Be Crazy", imdb_rating: "9.3" },
+        { season: "2", episode: "7", title: "Big Trouble in Little Sanchez", imdb_rating: "8.4" },
+        { season: "2", episode: "8", title: "Interdimensional Cable 2: Tempting Fate", imdb_rating: "7.6" },
+        { season: "2", episode: "9", title: "Look Who's Purging Now", imdb_rating: "8.5" },
+        { season: "2", episode: "10", title: "The Wedding Squanchers", imdb_rating: "9.3" },
+        { season: "3", episode: "1", title: "The Rickshank Rickdemption", imdb_rating: "9.6" },
+        { season: "3", episode: "2", title: "Rickmancing the Stone", imdb_rating: "8.1" },
+        { season: "3", episode: "3", title: "Pickle Rick", imdb_rating: "9.3" },
+        { season: "3", episode: "4", title: "Vindicators 3: The Return of Worldender", imdb_rating: "8.1" },
+        { season: "3", episode: "5", title: "The Whirly Dirly Conspiracy", imdb_rating: "8.4" },
+        { season: "3", episode: "6", title: "Rest and Ricklaxation", imdb_rating: "8.8" },
+        { season: "3", episode: "7", title: "The Ricklantis Mixup", imdb_rating: "9.8" },
+        { season: "3", episode: "8", title: "Morty's Mind Blowers", imdb_rating: "8.9" },
+        { season: "3", episode: "9", title: "The ABC's of Beth", imdb_rating: "7.9" },
+        { season: "3", episode: "10", title: "The Rickchurian Mortydate", imdb_rating: "8.2" },
+        { season: "4", episode: "1", title: "Edge of Tomorty: Rick Die Rickpeat", imdb_rating: "8.9" },
+        { season: "4", episode: "2", title: "The Old Man and the Seat", imdb_rating: "8.2" },
+        { season: "4", episode: "3", title: "One Crew over the Crewcoo's Morty", imdb_rating: "8.2" },
+        { season: "4", episode: "4", title: "Claw and Hoarder: Special Ricktim's Morty", imdb_rating: "7.3" },
+        { season: "4", episode: "5", title: "Rattlestar Ricklactica", imdb_rating: "8.8" },
+        { season: "4", episode: "6", title: "Never Ricking Morty", imdb_rating: "8" },
+        { season: "4", episode: "7", title: "Promortyus", imdb_rating: "8" },
+        { season: "4", episode: "8", title: "The Vat of Acid Episode", imdb_rating: "9.5" },
+        { season: "4", episode: "9", title: "Childrick of Mort", imdb_rating: "7.7" },
+        { season: "4", episode: "10", title: "Star Mort Rickturn of the Jerri", imdb_rating: "9" },
+        { season: "5", episode: "1", title: "Mort Dinner Rick Andre", imdb_rating: "9" },
+        { season: "5", episode: "2", title: "Mortyplicity", imdb_rating: "8.7" },
+        { season: "5", episode: "3", title: "A Rickconvenient Mort", imdb_rating: "7.8" },
+        { season: "5", episode: "4", title: "Rickdependence Spray", imdb_rating: "5.7" },
+        { season: "5", episode: "5", title: "Amortycan Grickfitti", imdb_rating: "7" },
+        { season: "5", episode: "6", title: "Rick & Morty's Thanksploitation Spectacular", imdb_rating: "7.1" },
+        { season: "5", episode: "7", title: "Gotron Jerrysis Rickvangelion", imdb_rating: "6.3" },
+        { season: "5", episode: "8", title: "Rickternal Friendshine of the Spotless Mort", imdb_rating: "8.2" },
+        { season: "5", episode: "9", title: "Forgetting Sarick Mortshall", imdb_rating: "8.2" },
+        { season: "5", episode: "10", title: "Rickmurai Jack", imdb_rating: "9.3" },
+        { season: "6", episode: "1", title: "Solaricks", imdb_rating: "8.5" },
+        { season: "6", episode: "2", title: "Rick: A Mort Well Lived", imdb_rating: "7.8" },
+        { season: "6", episode: "3", title: "Bethic Twinstinct", imdb_rating: "7.7" },
+        { season: "6", episode: "4", title: "Night Family", imdb_rating: "8.5" },
+        { season: "6", episode: "5", title: "Final DeSmithation", imdb_rating: "8.2" },
+        { season: "6", episode: "6", title: "JuRicksic Mort", imdb_rating: "7.8" },
+        { season: "6", episode: "7", title: "Full Meta Jackrick", imdb_rating: "7.8" },
+        { season: "6", episode: "8", title: "Analyze Piss", imdb_rating: "8.3" },
+        { season: "6", episode: "9", title: "A Rick in King Mortur's Mort", imdb_rating: "7.4" },
+        { season: "6", episode: "10", title: "Ricktional Mortpoon's Rickmas Mortcation", imdb_rating: "8" },
+        { season: "7", episode: "1", title: "How Poopy Got His Poop Back", imdb_rating: "6.1" },
+        { season: "7", episode: "2", title: "The Jerrick Trap", imdb_rating: "7.3" },
+        { season: "7", episode: "3", title: "Air Force Wong", imdb_rating: "6.8" },
+        { season: "7", episode: "4", title: "That's Amorte", imdb_rating: "8.3" },
+        { season: "7", episode: "5", title: "Unmortricken", imdb_rating: "9.2" },
+        { season: "7", episode: "6", title: "Rickfending Your Mort", imdb_rating: "7.8" },
+        { season: "7", episode: "7", title: "Wet Kuat Amortican Summer", imdb_rating: "6.4" },
+        { season: "7", episode: "8", title: "Rise of the Numbericons: The Movie", imdb_rating: "4.5" },
+        { season: "7", episode: "9", title: "Mort: Ragnarick", imdb_rating: "8" },
+        { season: "7", episode: "10", title: "Fear No Mort", imdb_rating: "9.4" },
+        { season: "8", episode: "1", title: "Summer of All Fears", imdb_rating: "8.3" },
+        { season: "8", episode: "2", title: "Valkyrick", imdb_rating: "7.1" },
+        { season: "8", episode: "3", title: "The Rick, The Mort & The Ugly", imdb_rating: "7.9" },
+        { season: "8", episode: "4", title: "The Last Temptation of Jerry", imdb_rating: "6.3" },
+        { season: "8", episode: "5", title: "Cryo Mort a Rickver", imdb_rating: "7.1" },
+        { season: "8", episode: "6", title: "The Curicksous Case of Bethjamin Button", imdb_rating: "7.4" },
+        { season: "8", episode: "7", title: "Ricker Than Fiction", imdb_rating: "6.7" },
+        { season: "8", episode: "8", title: "Nomortland", imdb_rating: "8" },
+        { season: "8", episode: "9", title: "Morty Daddy", imdb_rating: "6.6" },
+        { season: "8", episode: "10", title: "Hot Rick", imdb_rating: "8.9" },
+        { season: "9", episode: "1", title: "There's Something About Morty", imdb_rating: "8.8" },
+        { season: "9", episode: "2", title: "Ricks Days, Seven Nights", imdb_rating: "8.8" },
+        { season: "9", episode: "3", title: "Rick Fu Hustle", imdb_rating: "7.1" },
+        { season: "9", episode: "4", title: "A Ricker Runs Through It", imdb_rating: "7.5" },
+        { season: "9", episode: "5", title: "Jer Bud", imdb_rating: "7.6" },
+        { season: "9", episode: "6", title: "Erickerhead", imdb_rating: "8" },
+        { season: "9", episode: "7", title: "Mortgully: The Last Rickforest", imdb_rating: "9.2" },
+        { season: "9", episode: "8", title: "Rickuiem Mort a Dream", imdb_rating: "8.3" },
+        { season: "9", episode: "9", title: "Salute Your Morts", imdb_rating: "7.5" },
+        { season: "9", episode: "10", title: "Field of Dreams", imdb_rating: "9.3" },
+      ];
 
-          const margin = {top: 150, right: 20, bottom: 100, left: 100};
-          const size = 50;
-          const width = size * 11;
-          const height = size * 7;
+      function render() {
+        const container = d3.select("#chart-container");
+        container.select("svg").remove();
 
-          const svg = d3
-            .select("#chart-container")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom + 50)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+        const data = DATA;
+        const maxSeason = 9;
+        const maxEpisode = 11;
+        const size = window.innerWidth < 700 ? 36 : 48;
+        const margin = {
+          top: 70,
+          right: window.innerWidth < 700 ? 16 : 90,
+          bottom: 90,
+          left: 86,
+        };
+        const width = size * maxEpisode;
+        const height = size * maxSeason;
 
-          const maxSeason = 7;
-          const maxEpisode = 11;
+        const svgRoot = container
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .attr("role", "img")
+          .attr("aria-label", "Heatmap of Rick and Morty IMDb ratings by season and episode");
 
-          const xScale = d3
-            .scaleBand()
-            .domain(d3.range(1, maxEpisode + 1))
-            .range([0, width])
-            .padding(0.1);
+        const svg = svgRoot
+          .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`);
 
-          const yScale = d3
-            .scaleBand()
-            .domain(d3.range(1, maxSeason + 1))
-            .range([0, height])
-            .padding(0.1);
+        const xScale = d3
+          .scaleBand()
+          .domain(d3.range(1, maxEpisode + 1))
+          .range([0, width])
+          .padding(0.12);
 
-          const colorScale = d3
-            .scaleLinear()
-            .domain([4.5, 7.1, 9.3])
-            .range(["#b47c34", "#e0f3f3", "#005f4f"]);
+        const yScale = d3
+          .scaleBand()
+          .domain(d3.range(1, maxSeason + 1))
+          .range([0, height])
+          .padding(0.12);
 
-          const tooltip = d3.select("#tooltip");
+        // Same readable pattern as the original chart: mud → pale mint → deep teal
+        const colorScale = d3
+          .scaleLinear()
+          .domain([4.5, 7.1, 9.3])
+          .range(["#b47c34", "#e0f3f3", "#005f4f"]);
 
+        const tooltip = d3.select("#tooltip");
+
+        // Axis titles: EP above the columns; SEASON centered along the left
+        svg
+          .append("text")
+          .attr("class", "axis-label")
+          .attr("x", 0)
+          .attr("y", -28)
+          .attr("text-anchor", "start")
+          .text("EP →");
+
+        svg
+          .append("text")
+          .attr("class", "axis-label")
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "middle")
+          .attr("transform", `translate(-38, ${20}) rotate(-90)`)
+          .text("← SEASON");
+
+        svg
+          .selectAll(".x-tick")
+          .data(d3.range(1, maxEpisode + 1))
+          .enter()
+          .append("text")
+          .attr("class", "axis-label")
+          .attr("x", (d) => xScale(d) + xScale.bandwidth() / 2)
+          .attr("y", -8)
+          .attr("text-anchor", "middle")
+          .text((d) => d);
+
+        svg
+          .selectAll(".y-tick")
+          .data(d3.range(1, maxSeason + 1))
+          .enter()
+          .append("text")
+          .attr("class", "axis-label")
+          .attr("x", -12)
+          .attr("y", (d) => yScale(d) + yScale.bandwidth() / 2 + 4)
+          .attr("text-anchor", "end")
+          .text((d) => `S${d}`);
+
+        const cells = svg
+          .selectAll(".cell")
+          .data(data)
+          .enter()
+          .append("rect")
+          .attr("class", "cell")
+          .attr("x", (d) => xScale(+d.episode))
+          .attr("y", (d) => yScale(+d.season))
+          .attr("width", xScale.bandwidth())
+          .attr("height", yScale.bandwidth())
+          .attr("rx", 4)
+          .attr("ry", 4)
+          .attr("fill", (d) => colorScale(+d.imdb_rating))
+          .attr("opacity", 0)
+          .on("mouseover", function (event, d) {
+            d3.select(this).classed("is-hot", true);
+            tooltip
+              .style("opacity", 1)
+              .html(
+                `<div class="ep">S${d.season} · E${d.episode}</div>
+                 <div class="title">${d.title}</div>
+                 <div class="rating">IMDb <strong>${d.imdb_rating}</strong></div>`
+              )
+              .style("left", event.pageX + 14 + "px")
+              .style("top", event.pageY - 20 + "px");
+          })
+          .on("mousemove", function (event) {
+            tooltip
+              .style("left", event.pageX + 14 + "px")
+              .style("top", event.pageY - 20 + "px");
+          })
+          .on("mouseout", function () {
+            d3.select(this).classed("is-hot", false);
+            tooltip.style("opacity", 0);
+          });
+
+        cells
+          .transition()
+          .duration(500)
+          .delay((d, i) => Math.min(i * 8, 600))
+          .attr("opacity", 1);
+
+        // Divide classic era / later chaos after season 4
+        const divideY = yScale(5);
+        svg
+          .append("line")
+          .attr("x1", -4)
+          .attr("x2", width + 4)
+          .attr("y1", divideY)
+          .attr("y2", divideY)
+          .attr("stroke", "#f8e71c")
+          .attr("stroke-width", 2)
+          .attr("stroke-dasharray", "5 4")
+          .attr("opacity", 0.85);
+
+        if (margin.right > 40) {
           svg
-            .selectAll(".cell")
-            .data(data)
-            .enter()
-            .append("rect")
-            .attr("x", (d) => xScale(+d.episode))
-            .attr("y", (d) => yScale(+d.season))
-            .attr("width", size)
-            .attr("height", size)
-            .attr("fill", (d) => colorScale(+d.imdb_rating))
-            .attr("stroke", "#fff")
-            .on("mouseover", function (event, d) {
-              d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
-              tooltip.transition().duration(200).style("opacity", 1);
-              tooltip
-                .html(
-                  `<div class="title">Season ${d.season} Episode ${d.episode}</div><strong>${d.title}</strong><br><span style="font-size: 12px;">Rating on IMDb: <span class="rating">${d.imdb_rating}</span></span>`
-                )
-                .style("left", event.pageX + 10 + "px")
-                .style("top", event.pageY - 28 + "px");
-            })
-            .on("mouseout", function () {
-              d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1);
-              tooltip.transition().duration(500).style("opacity", 0);
-            });
-
+            .append("text")
+            .attr("class", "anno-text")
+            .attr("x", width + 10)
+            .attr("y", divideY + 4)
+            .text("post-S4 chaos →");
+        } else {
           svg
             .append("text")
-            .attr("x", -5)
-            .attr("y", -70)
-            .attr("text-anchor", "start")
-            .attr("class", "title-text")
-            .attr("font-size", "28px")
-            .text("Has Rick and Morty Fallen from Grace?");
-
-          svg
-            .append("text")
-            .attr("x", -5)
-            .attr("y", -45)
-            .attr("text-anchor", "start")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "14px")
-            .text("From season 5 onwards, ratings have become more uneven.");
-
-          svg
-            .append("text")
-            .attr("y", 0)
-            .attr("text-anchor", "start")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "12px")
-            .attr("font-weight", 600)
-            .attr("fill", "#7d7d7d")
-            .selectAll("tspan")
-            .data(["Seasons", "↓"])
-            .enter()
-            .append("tspan")
-            .attr("x", -5)
-            .attr("dy", (d, i) => (i === 0 ? "0" : "1.2em"))
-            .text((d) => d);
-
-          svg
-            .append("text")
-            .attr("x", -5)
-            .attr("y", -15)
-            .attr("text-anchor", "start")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "12px")
-            .attr("font-weight", 600)
-            .attr("fill", "#7d7d7d")
-            .text("Episodes →");
-
-          // Add a black line under season 4
-          svg
-            .append("line")
-            .attr("x1", 0)
-            .attr("x2", width)
-            .attr("y1", yScale(4) + size)
-            .attr("y2", yScale(4) + size)
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);
-
-          // Add an arrow and annotation to the right of the line
-          svg
-            .append("text")
-            .attr("x", width - 60)
-            .attr("y", yScale(4) + size + 20)
-            .attr("text-anchor", "start")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "12px")
-            .attr("fill", "#7d7d7d");
-
-          const legendWidth = 300;
-          const legendHeight = 15;
-
-          const legend = svg
-            .append("g")
-            .attr("transform", `translate(${width / 2 - legendWidth / 2},${height + 30})`);
-
-          const legendScale = d3.scaleLinear().domain([4.5, 9.2]).range([0, legendWidth]);
-
-          const legendAxis = d3.axisBottom(legendScale).ticks(5);
-
-          legend
-            .append("defs")
-            .append("linearGradient")
-            .attr("id", "legendGradient")
-            .selectAll("stop")
-            .data([
-              {offset: "0%", color: "#b47c34"},
-              {offset: "50%", color: "#e0f3f3"},
-              {offset: "100%", color: "#005f4f"},
-            ])
-            .enter()
-            .append("stop")
-            .attr("offset", (d) => d.offset)
-            .attr("stop-color", (d) => d.color);
-
-          legend
-            .append("rect")
-            .attr("width", legendWidth)
-            .attr("height", legendHeight)
-            .style("fill", "url(#legendGradient)");
-
-          legend
-            .append("text")
-            .attr("x", legendWidth / 2)
-            .attr("y", 35)
-            .attr("text-anchor", "middle")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "14px")
-            .attr("font-weight", "bold")
-            .text("IMDb rating");
-
-          legend
-            .append("text")
-            .attr("x", 0)
-            .attr("y", legendHeight + 15)
-            .attr("text-anchor", "start")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "12px")
-            .text("4.5");
-
-          legend
-            .append("text")
-            .attr("x", legendWidth)
-            .attr("y", legendHeight + 15)
+            .attr("class", "anno-text")
+            .attr("x", width - 4)
+            .attr("y", divideY - 6)
             .attr("text-anchor", "end")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "12px")
-            .text("9.8");
+            .text("post-S4 chaos");
+        }
 
-          svg
-            .append("text")
-            .attr("x", width / 2)
-            .attr("y", height + 120)
-            .attr("text-anchor", "middle")
-            .attr("font-family", "Arial, sans-serif")
-            .attr("font-size", "12px")
-            .attr("fill", "#7d7d7d")
-            .text("Map: Edison Wu · Source: IMDb");
-        })
-        .catch(function (error) {
-          console.error("Error loading or processing data: ", error);
+        // Legend
+        const legendWidth = Math.min(280, width * 0.7);
+        const legendHeight = 12;
+        const legend = svg
+          .append("g")
+          .attr("transform", `translate(${(width - legendWidth) / 2},${height + 28})`);
+
+        const gradient = legend
+          .append("defs")
+          .append("linearGradient")
+          .attr("id", "rmLegend");
+
+        [
+          { offset: "0%", color: "#b47c34" },
+          { offset: "50%", color: "#e0f3f3" },
+          { offset: "100%", color: "#005f4f" },
+        ].forEach((stop) => {
+          gradient
+            .append("stop")
+            .attr("offset", stop.offset)
+            .attr("stop-color", stop.color);
         });
+
+        legend
+          .append("rect")
+          .attr("width", legendWidth)
+          .attr("height", legendHeight)
+          .attr("rx", 3)
+          .style("fill", "url(#rmLegend)")
+          .attr("stroke", "rgba(224,243,243,0.35)");
+
+        legend
+          .append("text")
+          .attr("class", "axis-label")
+          .attr("x", 0)
+          .attr("y", legendHeight + 16)
+          .attr("text-anchor", "start")
+          .text("4.5");
+
+        legend
+          .append("text")
+          .attr("class", "axis-label")
+          .attr("x", legendWidth)
+          .attr("y", legendHeight + 16)
+          .attr("text-anchor", "end")
+          .text("9.8");
+
+        legend
+          .append("text")
+          .attr("x", legendWidth / 2)
+          .attr("y", legendHeight + 34)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#44c8f5")
+          .attr("font-family", "Bangers, sans-serif")
+          .attr("font-size", 14)
+          .attr("letter-spacing", "0.06em")
+          .text("IMDb RATING");
+      }
+
+      render();
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(render, 160);
+      });
     </script>
   </body>
 </html>

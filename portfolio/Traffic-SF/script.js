@@ -1,18 +1,15 @@
-// Initialize the map
-const map = L.map("map").setView([37.76, -122.44], 12.3);
+// —— Map (NYT locator style) ——
+const map = L.map("map", {
+  scrollWheelZoom: false,
+  zoomControl: true,
+}).setView([37.76, -122.44], 12.3);
 
-// Add a tile layer (Stamen Toner Background)
-const Stadia_StamenTonerBackground = L.tileLayer(
-  "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-  {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    ext: "png",
-  }
-);
-Stadia_StamenTonerBackground.addTo(map);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  maxZoom: 19,
+}).addTo(map);
 
-// Coordinates with descriptions
 const locations = [
   {
     lat: 37.7802,
@@ -154,163 +151,251 @@ const locations = [
   },
 ];
 
-// Loop through locations and add markers with tooltips
-locations.forEach(function (location) {
-  const marker = L.circleMarker([location.lat, location.lng], {
-    color: "white",
-    fillColor: "red",
-    fillOpacity: 0.8,
-    radius: 7,
-  }).addTo(map);
+const markerStyle = {
+  color: "#ffffff",
+  weight: 1.5,
+  fillColor: "#c41e3a",
+  fillOpacity: 0.92,
+  radius: 5.5,
+};
 
-  // Bind tooltip to marker with maxWidth and minWidth for better text wrapping
+locations.forEach(function (location) {
+  const marker = L.circleMarker([location.lat, location.lng], markerStyle).addTo(map);
+
   marker.bindTooltip(location.description, {
-    permanent: false, // Only show when hovered
+    permanent: false,
     direction: "top",
-    className: "custom-tooltip", // Add custom class for styling
-    maxWidth: 300, // Increase the width for longer lines
-    minWidth: 250, // Prevent wrapping too early
+    className: "nyt-tooltip",
+    opacity: 1,
+    offset: [0, -4],
   });
 });
 
-////// Stacked Bar Chart ///////
-// Set up the dimensions and margins for the chart
-const margin = {top: 20, right: 30, bottom: 20, left: 50},
-  width = Math.min(1000, window.innerWidth * 0.8) - margin.left - margin.right,
-  height = 500 - margin.top - margin.bottom;
+// —— Stacked bar chart (NYT graphic style) ——
+const chartContainer = document.getElementById("chart");
+const tooltipEl = document.getElementById("chart-tooltip");
 
-// Append SVG to the #chart div
-const svg = d3
-  .select("#chart")
-  .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
+const COLOR = {
+  Pedestrian: "#6b0f1a",
+  Passenger: "#9c1f2e",
+  Driver: "#c41e3a",
+  Motorcyclist: "#e07070",
+  Bicyclist: "#e8a090",
+  Other: "#f0cfc4",
+};
 
-// Load the CSV data
-d3.csv("processed_victims_Types_data.csv").then(function (data) {
-  // List of subgroups (victim roles)
-  const subgroups = data.columns.slice(1).reverse(); // Reverse the order of the subgroups
+const CATEGORY_ORDER = [
+  "Pedestrian",
+  "Passenger",
+  "Driver",
+  "Motorcyclist",
+  "Bicyclist",
+  "Other",
+];
 
-  // List of groups (years)
+// Embedded so the chart works over file:// (d3.csv is blocked by browsers locally)
+const CHART_DATA = [
+  { accident_year: "2014", Pedestrian: 23, Passenger: 5, Driver: 11, Motorcyclist: 0, Bicyclist: 3, Other: 0 },
+  { accident_year: "2015", Pedestrian: 22, Passenger: 0, Driver: 11, Motorcyclist: 0, Bicyclist: 4, Other: 0 },
+  { accident_year: "2016", Pedestrian: 19, Passenger: 6, Driver: 19, Motorcyclist: 0, Bicyclist: 3, Other: 0 },
+  { accident_year: "2017", Pedestrian: 13, Passenger: 0, Driver: 7, Motorcyclist: 0, Bicyclist: 2, Other: 0 },
+  { accident_year: "2018", Pedestrian: 15, Passenger: 3, Driver: 6, Motorcyclist: 0, Bicyclist: 4, Other: 0 },
+  { accident_year: "2019", Pedestrian: 21, Passenger: 8, Driver: 16, Motorcyclist: 0, Bicyclist: 1, Other: 0 },
+  { accident_year: "2020", Pedestrian: 14, Passenger: 9, Driver: 14, Motorcyclist: 0, Bicyclist: 2, Other: 3 },
+  { accident_year: "2021", Pedestrian: 14, Passenger: 5, Driver: 19, Motorcyclist: 0, Bicyclist: 2, Other: 0 },
+  { accident_year: "2022", Pedestrian: 23, Passenger: 5, Driver: 19, Motorcyclist: 0, Bicyclist: 1, Other: 2 },
+  { accident_year: "2023", Pedestrian: 22, Passenger: 4, Driver: 13, Motorcyclist: 0, Bicyclist: 1, Other: 5 },
+  { accident_year: "2024", Pedestrian: 14, Passenger: 2, Driver: 3, Motorcyclist: 2, Bicyclist: 2, Other: 0 },
+];
+
+function renderChart() {
+  chartContainer.innerHTML = "";
+
+  const data = CHART_DATA.map((row) => ({ ...row }));
+  const subgroups = CATEGORY_ORDER;
   const groups = data.map((d) => d.accident_year);
 
-  // X axis: scale for years
-  const x = d3.scaleBand().domain(groups).range([0, width]).padding([0.2]);
+  const containerWidth = chartContainer.clientWidth || 960;
+  const margin = { top: 48, right: 16, bottom: 36, left: 40 };
+  const width = Math.max(280, containerWidth - margin.left - margin.right);
+  const height = Math.max(280, Math.min(420, window.innerWidth < 768 ? 300 : 380));
 
-  svg
+  const svg = d3
+    .select("#chart")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .attr("role", "presentation");
+
+  const g = svg
     .append("g")
-    .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x).tickSize(1))
-    .selectAll("text")
-    .style("font-size", "14px");
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Y axis: scale for count, with nice background tick lines
+  const x = d3.scaleBand().domain(groups).range([0, width]).padding(0.18);
+
   const y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, (d) => d3.sum(subgroups, (key) => +d[key]))])
+    .domain([0, d3.max(data, (d) => d3.sum(subgroups, (key) => d[key]))])
     .nice()
     .range([height, 0]);
 
-  const maxY = d3.max(data, (d) => d3.sum(subgroups, (key) => +d[key]));
-  const yTicks = d3.range(0, maxY + 10, 10);
+  const color = d3
+    .scaleOrdinal()
+    .domain(subgroups)
+    .range(subgroups.map((k) => COLOR[k] || "#999"));
 
-  const yAxis = svg
+  // Legend (horizontal, wraps on narrow widths)
+  const legend = svg
     .append("g")
-    .call(d3.axisLeft(y).tickValues(yTicks).tickSize(-width))
-    .call((g) => g.select(".domain").remove()) // Remove vertical line
-    .call((g) => g.selectAll("line").attr("stroke", "#e0e0e0"))
-    .call((g) => g.selectAll("text").attr("font-size", "14px"));
+    .attr("class", "legend")
+    .attr("transform", `translate(${margin.left}, 8)`);
 
-  const color = d3.scaleOrdinal().domain(subgroups).range([
-    "#fed9a6", // light orange
-    "#c3410f", // deep orange-red
-    "#e08964", // light orange-red
-    "#c56a4a", // medium red-orange
-    "#a44b34", // softer red-orange
-    "#5a1a0d", // deep wine red;
-  ]);
-
-  // Stack the data
-  const stackedData = d3.stack().keys(subgroups.reverse())(data); // Make sure the stack is in correct order
-
-  // Show the bars
-  const bars = svg
+  let legendX = 0;
+  let legendY = 0;
+  const legendGap = 14;
+  const legendRowH = 16;
+  const legendItems = legend
+    .selectAll("g")
+    .data(subgroups)
+    .enter()
     .append("g")
+    .attr("class", (d) => `legend-item legend-${d}`)
+    .attr("transform", (d) => {
+      const labelWidth = d.length * 6.8 + 20;
+      if (legendX > 0 && legendX + labelWidth > width) {
+        legendX = 0;
+        legendY += legendRowH;
+      }
+      const xPos = legendX;
+      const yPos = legendY;
+      legendX += labelWidth + legendGap;
+      return `translate(${xPos}, ${yPos})`;
+    });
+
+  // Push plot down if legend wraps
+  const legendRows = legendY / legendRowH + 1;
+  const legendOffset = Math.max(0, (legendRows - 1) * legendRowH);
+  if (legendOffset > 0) {
+    g.attr("transform", `translate(${margin.left},${margin.top + legendOffset})`);
+    svg.attr(
+      "viewBox",
+      `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom + legendOffset}`
+    );
+  }
+
+  legendItems
+    .append("rect")
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("y", 1)
+    .attr("fill", (d) => color(d));
+
+  legendItems
+    .append("text")
+    .attr("x", 14)
+    .attr("y", 10)
+    .attr("fill", "#121212")
+    .attr("font-family", "Libre Franklin, Helvetica Neue, sans-serif")
+    .attr("font-size", 11)
+    .text((d) => d);
+
+  // Gridlines
+  const yTicks = y.ticks(5);
+  g.append("g")
+    .attr("class", "grid")
+    .call(d3.axisLeft(y).tickValues(yTicks).tickSize(-width).tickFormat(""))
+    .call((sel) => sel.select(".domain").remove())
+    .call((sel) =>
+      sel.selectAll("line").attr("stroke", "#e2e2e2").attr("stroke-width", 1)
+    );
+
+  // X axis
+  g.append("g")
+    .attr("class", "x-axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).tickSize(0).tickPadding(10))
+    .call((sel) => sel.select(".domain").attr("stroke", "#121212").attr("stroke-width", 1))
+    .call((sel) =>
+      sel
+        .selectAll("text")
+        .attr("fill", "#121212")
+        .attr("font-family", "Libre Franklin, Helvetica Neue, sans-serif")
+        .attr("font-size", 11)
+    );
+
+  // Y axis
+  g.append("g")
+    .attr("class", "y-axis")
+    .call(d3.axisLeft(y).tickValues(yTicks).tickSize(0).tickPadding(8))
+    .call((sel) => sel.select(".domain").remove())
+    .call((sel) =>
+      sel
+        .selectAll("text")
+        .attr("fill", "#666666")
+        .attr("font-family", "Libre Franklin, Helvetica Neue, sans-serif")
+        .attr("font-size", 11)
+    );
+
+  const stackedData = d3.stack().keys(subgroups)(data);
+
+  g.append("g")
+    .attr("class", "bars")
     .selectAll("g")
     .data(stackedData)
     .enter()
     .append("g")
-    .attr("fill", (d) => color(d.key)) // Use the subgroups' order for colors
-    .attr("class", (d) => `subgroup-${d.key}`) // Add a class to each subgroup
+    .attr("fill", (d) => color(d.key))
+    .attr("class", (d) => `subgroup subgroup-${d.key}`)
     .selectAll("rect")
     .data((d) => d)
     .enter()
     .append("rect")
     .attr("x", (d) => x(d.data.accident_year))
     .attr("y", (d) => y(d[1]))
-    .attr("height", (d) => y(d[0]) - y(d[1]))
+    .attr("height", (d) => Math.max(0, y(d[0]) - y(d[1])))
     .attr("width", x.bandwidth())
+    .style("cursor", "pointer")
     .on("mouseover", function (event, d) {
       const subgroup = d3.select(this.parentNode).datum().key;
+      const value = d[1] - d[0];
 
-      // Fade out other subgroups' bars
-      d3.selectAll("g").selectAll("rect").attr("fill-opacity", 0.3);
+      g.selectAll(".bars rect").attr("fill-opacity", 0.28);
+      g.selectAll(`.subgroup-${subgroup} rect`).attr("fill-opacity", 1);
 
-      // Highlight all rects of the same subgroup
-      d3.selectAll(`.subgroup-${subgroup}`).selectAll("rect").attr("fill-opacity", 1);
+      legend.selectAll(".legend-item").attr("opacity", 0.35);
+      legend.select(`.legend-${subgroup}`).attr("opacity", 1);
 
-      // Fade out other subgroups' legend
-      d3.selectAll(".legend").selectAll("rect").attr("fill-opacity", 0.3);
-
-      // Highlight the legend for the same subgroup
-      d3.select(`.legend-${subgroup}`).selectAll("rect").attr("fill-opacity", 1);
-
-      // Show the count for all bars of the same subgroup
-      d3.selectAll(`.subgroup-${subgroup}`)
-        .selectAll("rect")
-        .each(function (d) {
-          svg
-            .append("text")
-            .attr("class", "value-label")
-            .attr("x", x(d.data.accident_year) + x.bandwidth() / 2)
-            .attr("y", (y(d[0]) + y(d[1])) / 2)
-            .attr("text-anchor", "middle")
-            .text(d[1] - d[0])
-            .attr("fill", "white");
-        });
+      tooltipEl.hidden = false;
+      tooltipEl.innerHTML = `
+        <div class="tt-year">${d.data.accident_year}</div>
+        <div class="tt-row">${subgroup}: <span class="tt-value">${value}</span></div>
+      `;
+    })
+    .on("mousemove", function (event) {
+      const pad = 14;
+      let left = event.clientX + pad;
+      let top = event.clientY + pad;
+      const rect = tooltipEl.getBoundingClientRect();
+      if (left + rect.width > window.innerWidth - 8) {
+        left = event.clientX - rect.width - pad;
+      }
+      if (top + rect.height > window.innerHeight - 8) {
+        top = event.clientY - rect.height - pad;
+      }
+      tooltipEl.style.left = `${left}px`;
+      tooltipEl.style.top = `${top}px`;
     })
     .on("mouseout", function () {
-      // Restore all bars
-      d3.selectAll("rect").attr("fill-opacity", 1);
-      // Restore all legends
-      d3.selectAll(".legend").selectAll("rect").attr("fill-opacity", 1);
-      // Remove the count labels
-      svg.selectAll(".value-label").remove();
+      g.selectAll(".bars rect").attr("fill-opacity", 1);
+      legend.selectAll(".legend-item").attr("opacity", 1);
+      tooltipEl.hidden = true;
     });
+}
 
-  // Add a legend
-  const legend = svg
-    .selectAll(".legend")
-    .data(subgroups.reverse()) // Reverse the legend order
-    .enter()
-    .append("g")
-    .attr("class", (d) => `legend legend-${d}`) // Add class to identify each legend
-    .attr("transform", (d, i) => `translate(40,${i * 20})`);
+renderChart();
 
-  legend
-    .append("rect")
-    .attr("x", width - 18)
-    .attr("width", 18)
-    .attr("height", 18)
-    .style("fill", (d) => color(d)); // Use the same color mapping
-
-  legend
-    .append("text")
-    .attr("x", width - 24)
-    .attr("y", 9)
-    .attr("dy", ".35em")
-    .style("text-anchor", "end")
-    .text((d) => d);
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderChart, 180);
 });

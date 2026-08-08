@@ -3,74 +3,83 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Globe World Map</title>
-    <style>
-      .tooltip {
-        position: absolute;
-        background: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        pointer-events: none;
-        opacity: 0;
-        font-family: Arial, sans-serif;
-      }
-      .country-name {
-        font-size: 14px;
-        font-weight: bold;
-        margin-bottom: 4px;
-      }
-      .asylum-count {
-        font-size: 16px;
-      }
-      .arcs {
-        transition: opacity 0.2s;
-      }
-      .arcs:hover {
-        opacity: 1 !important;
-        stroke-width: 6px !important;
-        stroke: yellow !important;
-      }
-      .controls {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: rgba(255, 255, 255, 0.8);
-        padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        font-family: Arial, sans-serif;
-      }
-      .controls button {
-        margin-right: 5px;
-      }
-
-      h1,
-      h2 {
-        font-family: Arial, Helvetica, sans-serif;
-        text-align: center;
-        margin-top: 20px;
-      }
-
-      h2 {
-        font-weight: 200;
-        margin-bottom: 30px;
-      }
-    </style>
+    <title>Where Chinese Asylum-Seekers Go</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="title-container">
-      <h1 class="mainTitle">Number of Chinese asylum-seekers in different countries</h1>
-      <h2 class="byline">The U.S. has always been the most popular choice.</h2>
-    </div>
+    <article class="app">
+      <header class="hero">
+        <div class="kicker">Migration · 2003–2023</div>
+        <h1>Where Chinese asylum-seekers go</h1>
+        <p class="dek">
+          Great-circle flows from China to destination countries. Arc thickness tracks annual
+          asylum applications — the <strong>United States</strong> dominates recent years.
+        </p>
+        <div class="byline">By Edison Wu <span>·</span> Interactive</div>
+      </header>
 
-    <div id="chart"></div>
-    <div class="container vh-100"></div>
-    <div class="controls">
-      <button id="play">Play</button>
-      <button id="pause">Pause</button>
-      <span id="year-display">Year: 2023</span>
-    </div>
+      <div class="stage">
+        <div>
+          <h2 class="graphic-hed">Asylum applications from China, by destination</h2>
+          <p class="graphic-dek">
+            Drag to rotate. Use the timeline to scrub years; hover an arc for the country total.
+          </p>
+          <div id="chart" aria-label="Interactive globe of asylum flows"></div>
+        </div>
+
+        <aside class="panel">
+          <div class="card">
+            <h3>Timeline</h3>
+            <div class="year-row">
+              <div class="year-big" id="year-display">2023</div>
+              <div class="year-total">
+                Total
+                <strong id="year-total">—</strong>
+              </div>
+            </div>
+            <input type="range" id="year-slider" min="2003" max="2023" value="2023" step="1" />
+            <div class="btn-row">
+              <button id="play" type="button">Play</button>
+              <button id="pause" type="button">Pause</button>
+              <button id="spin" type="button" class="active">Spin</button>
+            </div>
+            <p class="hint">Press Play to animate 2003–2023.</p>
+          </div>
+
+          <div class="card">
+            <h3>Asylum scale</h3>
+            <div class="legend-scale">
+              <span style="background: #f0eee6"></span>
+              <span style="background: #c6d9e8"></span>
+              <span style="background: #6baed6"></span>
+              <span style="background: #2171b5"></span>
+              <span style="background: #08306b"></span>
+            </div>
+            <div class="legend-labels">
+              <span>0</span>
+              <span>1k</span>
+              <span>5k</span>
+              <span>10k+</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Top destinations</h3>
+            <ol class="rank-list" id="rank-list"></ol>
+          </div>
+        </aside>
+      </div>
+
+      <p class="footer-note">
+        Sources: Asylum application data. Globe by Edison Wu. Data for 2003–2023.
+      </p>
+    </article>
 
     <script src="js/d3.v5.min.js"></script>
     <script src="js/d3-geo-projection.v2.min.js"></script>
@@ -78,108 +87,161 @@
     <script src="js/d3-drag.v1.min.js"></script>
     <script src="js/topojson.min.js"></script>
     <script>
-      const margin = {top: 0, right: 0, bottom: 0, left: 0},
-        width = 1000 - margin.left - margin.right,
-        height = 800 - margin.top - margin.bottom;
-
-      // Create tooltip div
-      const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
-
-      const svg = d3
-        .select("#chart")
-        .append("svg")
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr(
-          "viewBox",
-          `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`
-        );
-
-      const chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-
-      let currentYear = 2023;
-      let timer;
-      let allData;
-
-      Promise.all([
-        d3.json("countries-110m.json"),
-        d3.csv("globe.csv", function (d) {
-          return {
-            year: +d.Year,
-            asylum: +d.Asylum,
-            lat: +d.Latitude,
-            long: +d.Longitude,
-            country: d.Country,
-          };
-        }),
-      ]).then(function (data) {
-        allData = data[1];
-
-        const projection = d3
-          .geoOrthographic()
-          .fitExtent(
-            [
-              [0, 0],
-              [width, height],
-            ],
-            topojson.feature(data[0], data[0].objects.countries)
-          )
-          .rotate([300, -30, 0]);
-
-        const path = d3.geoPath().projection(projection);
-
+      (function () {
+        const width = 900;
+        const height = 720;
         const chinaCoords = [116.4074, 39.9042];
+        const YEAR_MIN = 2003;
+        const YEAR_MAX = 2023;
 
-        const lineWidth = d3
-          .scaleLinear()
-          .domain(
-            d3.extent(allData, function (d) {
-              return d.asylum;
-            })
-          )
-          .range([0.5, 8]);
+        let currentYear = YEAR_MAX;
+        let allData = [];
+        let yearTimer = null;
+        let spinning = true;
+        let dragging = false;
+        let animId = null;
+        let particleT = 0;
 
-        const colorScale = d3
-          .scaleThreshold()
-          .domain([1, 1000, 5000, 10000])
-          .range(["#c1e7ff", "#7fb3d5", "#1f78b4", "#08306b"]);
+        const tooltip = d3
+          .select("body")
+          .append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0);
 
-        // Draw ocean background
-        chart
+        const svg = d3
+          .select("#chart")
+          .append("svg")
+          .attr("viewBox", `0 0 ${width} ${height}`)
+          .attr("preserveAspectRatio", "xMidYMid meet");
+
+        const defs = svg.append("defs");
+
+        const oceanGrad = defs
+          .append("radialGradient")
+          .attr("id", "oceanGrad")
+          .attr("cx", "38%")
+          .attr("cy", "32%")
+          .attr("r", "70%");
+        oceanGrad.append("stop").attr("offset", "0%").attr("stop-color", "#eef5f9");
+        oceanGrad.append("stop").attr("offset", "55%").attr("stop-color", "#d9e6ef");
+        oceanGrad.append("stop").attr("offset", "100%").attr("stop-color", "#c5d6e4");
+
+        const glowGrad = defs
+          .append("radialGradient")
+          .attr("id", "atmGrad")
+          .attr("cx", "50%")
+          .attr("cy", "50%")
+          .attr("r", "50%");
+        glowGrad.append("stop").attr("offset", "72%").attr("stop-color", "#121212").attr("stop-opacity", 0);
+        glowGrad.append("stop").attr("offset", "88%").attr("stop-color", "#121212").attr("stop-opacity", 0.04);
+        glowGrad.append("stop").attr("offset", "100%").attr("stop-color", "#121212").attr("stop-opacity", 0);
+
+        const arcGrad = defs
+          .append("linearGradient")
+          .attr("id", "arcGrad")
+          .attr("gradientUnits", "userSpaceOnUse");
+        arcGrad.append("stop").attr("offset", "0%").attr("stop-color", "#8b1528");
+        arcGrad.append("stop").attr("offset", "100%").attr("stop-color", "#c41e3a");
+
+        const chart = svg.append("g");
+
+        const atmosphere = chart
           .append("circle")
-          .attr("cx", width / 2)
-          .attr("cy", height / 2)
-          .attr("r", projection.scale())
-          .attr("fill", "#a2abb3");
+          .attr("class", "atmosphere")
+          .attr("fill", "url(#atmGrad)");
 
-        // Draw countries
-        chart
-          .selectAll("path.countries")
-          .data(topojson.feature(data[0], data[0].objects.countries).features)
-          .join("path")
-          .attr("d", path)
-          .attr("class", function (d) {
-            return "countries " + d.properties.name;
-          })
-          .attr("stroke", "#999")
-          .attr("stroke-width", "0.5px")
-          .attr("fill", function (d) {
-            if (d.properties.name === "China") {
-              return "#8b0000"; // Deep red for China
-            }
-            const countryData = allData.find(
-              (c) => c.country === d.properties.name && c.year === currentYear
+        const ocean = chart
+          .append("circle")
+          .attr("class", "ocean")
+          .attr("fill", "url(#oceanGrad)")
+          .attr("stroke", "#a8b8c6")
+          .attr("stroke-width", 1);
+
+        const graticulePath = chart.append("path").attr("class", "graticule");
+        const countriesG = chart.append("g").attr("class", "countries-layer");
+        const arcsG = chart.append("g").attr("class", "arcs-layer");
+        const dotsG = chart.append("g").attr("class", "dots-layer");
+        const particlesG = chart.append("g").attr("class", "particles-layer");
+        const chinaPulse = chart
+          .append("circle")
+          .attr("class", "china-pulse")
+          .attr("fill", "none")
+          .attr("stroke", "#c41e3a")
+          .attr("stroke-width", 1.5)
+          .attr("opacity", 0);
+
+        let projection, path, graticule, landFeatures;
+        let lineWidth, colorScale, radiusScale;
+
+        function chinaProjected() {
+          return projection(chinaCoords);
+        }
+
+        function updateGlobeGeometry() {
+          const scale = projection.scale();
+          const t = projection.translate();
+          atmosphere.attr("cx", t[0]).attr("cy", t[1]).attr("r", scale * 1.08);
+          ocean.attr("cx", t[0]).attr("cy", t[1]).attr("r", scale);
+          graticulePath.attr("d", path(graticule));
+          countriesG.selectAll("path.countries").attr("d", path);
+
+          const cp = chinaProjected();
+          if (cp) {
+            chinaPulse
+              .attr("cx", cp[0])
+              .attr("cy", cp[1])
+              .attr("r", 10)
+              .attr("opacity", 0.75);
+          } else {
+            chinaPulse.attr("opacity", 0);
+          }
+        }
+
+        function yearData(year) {
+          return allData.filter((d) => d.year === year && d.asylum > 0);
+        }
+
+        function updateRanks(year) {
+          const rows = yearData(year)
+            .slice()
+            .sort((a, b) => b.asylum - a.asylum)
+            .slice(0, 6);
+
+          const total = d3.sum(yearData(year), (d) => d.asylum);
+          d3.select("#year-total").text(total.toLocaleString());
+
+          const items = d3
+            .select("#rank-list")
+            .selectAll("li")
+            .data(rows, (d) => d.country);
+
+          const enter = items.enter().append("li");
+          enter.append("span").attr("class", "n");
+          enter.append("span").attr("class", "name");
+          enter.append("span").attr("class", "val");
+
+          const merged = enter.merge(items);
+          merged.select(".n").text((d, i) => String(i + 1).padStart(2, "0"));
+          merged.select(".name").text((d) => d.country.replace("United States of America", "United States"));
+          merged.select(".val").text((d) => d.asylum.toLocaleString());
+          items.exit().remove();
+        }
+
+        function updateCountries(year) {
+          countriesG.selectAll("path.countries").attr("fill", function (d) {
+            if (d.properties.name === "China") return "#c41e3a";
+            const hit = allData.find(
+              (c) => c.country === d.properties.name && c.year === year
             );
-            return countryData && countryData.asylum > 0
-              ? colorScale(countryData.asylum)
-              : "#f3f2f3";
+            if (hit && hit.asylum > 0) return colorScale(hit.asylum);
+            return "#f0eee6";
           });
+        }
 
-        // Draw arcs and add interactions
         function updateArcs(year) {
-          const filteredData = allData.filter((d) => d.year === year && d.asylum > 0);
+          const filtered = yearData(year);
 
-          const arcs = chart.selectAll("path.arcs").data(filteredData);
+          const arcs = arcsG.selectAll("path.arcs").data(filtered, (d) => d.country);
 
           arcs
             .enter()
@@ -187,135 +249,267 @@
             .attr("class", "arcs")
             .merge(arcs)
             .attr("d", function (d) {
-              const coords = [
-                [chinaCoords[0], chinaCoords[1]],
-                [d.long, d.lat],
-              ];
-              return path({type: "LineString", coordinates: coords});
+              return path({
+                type: "LineString",
+                coordinates: [chinaCoords, [d.long, d.lat]],
+              });
             })
-            .attr("stroke", "#e34a33")
-            .attr("stroke-width", function (d) {
-              return lineWidth(d.asylum);
-            })
-            .attr("fill", "none")
-            .style("opacity", 0.4) // Reduce default opacity
+            .attr("stroke", "url(#arcGrad)")
+            .attr("stroke-width", (d) => lineWidth(d.asylum))
+            .style("opacity", (d) => (d.asylum > 5000 ? 0.75 : 0.4))
             .on("mouseover", function (d) {
-              // Highlight current arc
-              d3.select(this)
-                .style("opacity", 1)
-                .style("stroke-width", function (d) {
-                  return lineWidth(d.asylum) * 2;
-                })
-                .style("stroke", "yellow");
-
-              // Show tooltip
-              tooltip.transition().duration(200).style("opacity", 0.9);
-
+              d3.select(this).classed("is-hot", true).style("opacity", 1);
+              tooltip.transition().duration(120).style("opacity", 1);
               tooltip
                 .html(
-                  `
-                <div class="country-name">China → ${d.country}</div>
-                <div class="asylum-count">${d.asylum.toLocaleString()}</div>
-              `
+                  `<div class="route">China → destination</div>
+                   <div class="country-name">${d.country}</div>
+                   <div class="asylum-count"><strong>${d.asylum.toLocaleString()}</strong> asylum-seekers · ${d.year}</div>`
                 )
-                .style("left", d3.event.pageX + 10 + "px")
-                .style("top", d3.event.pageY - 28 + "px");
+                .style("left", d3.event.pageX + 14 + "px")
+                .style("top", d3.event.pageY - 20 + "px");
+            })
+            .on("mousemove", function () {
+              tooltip
+                .style("left", d3.event.pageX + 14 + "px")
+                .style("top", d3.event.pageY - 20 + "px");
             })
             .on("mouseout", function (d) {
-              // Restore arc style
               d3.select(this)
-                .style("opacity", 0.4)
-                .style("stroke-width", function (d) {
-                  return lineWidth(d.asylum);
-                })
-                .style("stroke", "#e34a33");
-
-              // Hide tooltip
-              tooltip.transition().duration(500).style("opacity", 0);
+                .classed("is-hot", false)
+                .style("opacity", d.asylum > 5000 ? 0.75 : 0.4);
+              tooltip.transition().duration(200).style("opacity", 0);
             });
 
           arcs.exit().remove();
+
+          const dots = dotsG.selectAll("circle.dest-dot").data(filtered, (d) => d.country);
+
+          dots
+            .enter()
+            .append("circle")
+            .attr("class", "dest-dot")
+            .merge(dots)
+            .attr("fill", "#c41e3a")
+            .attr("r", (d) => radiusScale(d.asylum))
+            .attr("opacity", 0.85)
+            .attr("cx", (d) => {
+              const p = projection([d.long, d.lat]);
+              return p ? p[0] : -9999;
+            })
+            .attr("cy", (d) => {
+              const p = projection([d.long, d.lat]);
+              return p ? p[1] : -9999;
+            })
+            .attr("display", (d) => (projection([d.long, d.lat]) ? null : "none"));
+
+          dots.exit().remove();
         }
 
-        function updateYearDisplay(year) {
-          d3.select("#year-display").text(`Year: ${year}`);
+        function redrawFlows() {
+          arcsG.selectAll("path.arcs").attr("d", function (d) {
+            return path({
+              type: "LineString",
+              coordinates: [chinaCoords, [d.long, d.lat]],
+            });
+          });
+
+          dotsG
+            .selectAll("circle.dest-dot")
+            .attr("cx", (d) => {
+              const p = projection([d.long, d.lat]);
+              return p ? p[0] : -9999;
+            })
+            .attr("cy", (d) => {
+              const p = projection([d.long, d.lat]);
+              return p ? p[1] : -9999;
+            })
+            .attr("display", (d) => (projection([d.long, d.lat]) ? null : "none"));
+        }
+
+        function updateParticles() {
+          const filtered = yearData(currentYear).filter((d) => d.asylum >= 100);
+          const pts = [];
+
+          filtered.forEach((d, i) => {
+            const interp = d3.geoInterpolate(chinaCoords, [d.long, d.lat]);
+            const n = Math.min(4, 1 + Math.floor(d.asylum / 20000));
+            for (let k = 0; k < n; k++) {
+              const t = (particleT + k / n + i * 0.07) % 1;
+              const xy = projection(interp(t));
+              if (xy) pts.push({ x: xy[0], y: xy[1], r: 1.6 + (d.asylum > 10000 ? 1.2 : 0) });
+            }
+          });
+
+          const sel = particlesG.selectAll("circle.particle").data(pts);
+          sel
+            .enter()
+            .append("circle")
+            .attr("class", "particle")
+            .merge(sel)
+            .attr("cx", (d) => d.x)
+            .attr("cy", (d) => d.y)
+            .attr("r", (d) => d.r)
+            .attr("opacity", 0.85);
+          sel.exit().remove();
         }
 
         function updateVisualization(year) {
           currentYear = year;
-          updateYearDisplay(year);
+          d3.select("#year-display").text(String(year));
+          d3.select("#year-slider").property("value", year);
+          updateCountries(year);
           updateArcs(year);
-
-          chart.selectAll("path.countries").attr("fill", function (d) {
-            if (d.properties.name === "China") {
-              return "#8b0000"; // Deep red for China
-            }
-            const countryData = allData.find(
-              (c) => c.country === d.properties.name && c.year === currentYear
-            );
-            return countryData && countryData.asylum > 0
-              ? colorScale(countryData.asylum)
-              : "#f3f2f3";
-          });
+          updateRanks(year);
+          updateGlobeGeometry();
         }
 
-        // Drag interaction
-        let v0, r0;
-
-        const drag = d3
-          .drag()
-          .subject(function () {
+        function tick(now) {
+          if (spinning && !dragging) {
             const r = projection.rotate();
-            return {x: r[0], y: -r[1]};
-          })
-          .on("start", function () {
-            v0 = [d3.event.x, d3.event.y];
-            r0 = projection.rotate();
-          })
-          .on("drag", function () {
-            if (!v0) return;
+            projection.rotate([r[0] + 0.18, r[1], r[2]]);
+            updateGlobeGeometry();
+            redrawFlows();
+          }
 
-            const v1 = [d3.event.x, d3.event.y];
-            const dr = [v1[0] - v0[0], v1[1] - v0[1]];
+          particleT = (particleT + 0.006) % 1;
+          updateParticles();
 
-            const newLambda = r0[0] + dr[0] * 0.5;
-            const newPhi = r0[1] - dr[1] * 0.5;
-            const clampedPhi = Math.max(-90, Math.min(90, newPhi));
+          // subtle China pulse
+          const cp = chinaProjected();
+          if (cp) {
+            const pulse = 8 + Math.sin(now / 350) * 4;
+            chinaPulse.attr("r", pulse).attr("opacity", 0.35 + Math.sin(now / 350) * 0.2);
+          }
 
-            projection.rotate([newLambda, clampedPhi, r0[2]]);
+          animId = requestAnimationFrame(tick);
+        }
 
-            chart.selectAll("path.countries").attr("d", path);
-            chart.selectAll("path.arcs").attr("d", function (d) {
-              const coords = [
-                [chinaCoords[0], chinaCoords[1]],
-                [d.long, d.lat],
-              ];
-              return path({type: "LineString", coordinates: coords});
+        Promise.all([
+          d3.json("countries-110m.json"),
+          d3.csv("globe.csv", function (d) {
+            return {
+              year: +d.Year,
+              asylum: +d.Asylum,
+              lat: +d.Latitude,
+              long: +d.Longitude,
+              country: d.Country,
+            };
+          }),
+        ])
+          .then(function (loaded) {
+            const world = loaded[0];
+            allData = loaded[1].filter((d) => d.country && !isNaN(d.asylum));
+
+            landFeatures = topojson.feature(world, world.objects.countries);
+
+            projection = d3
+              .geoOrthographic()
+              .fitExtent(
+                [
+                  [40, 20],
+                  [width - 40, height - 20],
+                ],
+                landFeatures
+              )
+              .rotate([-105, -25, 0])
+              .clipAngle(90);
+
+            path = d3.geoPath().projection(projection);
+            graticule = d3.geoGraticule().step([20, 20]);
+
+            lineWidth = d3
+              .scaleSqrt()
+              .domain([1, d3.max(allData, (d) => d.asylum)])
+              .range([1.2, 10]);
+
+            radiusScale = d3
+              .scaleSqrt()
+              .domain([1, d3.max(allData, (d) => d.asylum)])
+              .range([2.2, 12]);
+
+            colorScale = d3
+              .scaleThreshold()
+              .domain([1, 1000, 5000, 10000])
+              .range(["#f0eee6", "#c6d9e8", "#6baed6", "#2171b5", "#08306b"]);
+
+            countriesG
+              .selectAll("path.countries")
+              .data(landFeatures.features)
+              .enter()
+              .append("path")
+              .attr("class", (d) =>
+                d.properties.name === "China" ? "countries china" : "countries"
+              )
+              .attr("d", path);
+
+            // Drag to rotate
+            let v0, r0;
+            const drag = d3
+              .drag()
+              .subject(function () {
+                const r = projection.rotate();
+                return { x: r[0] / 0.45, y: -r[1] / 0.45 };
+              })
+              .on("start", function () {
+                dragging = true;
+                v0 = [d3.event.x, d3.event.y];
+                r0 = projection.rotate();
+              })
+              .on("drag", function () {
+                if (!v0) return;
+                const v1 = [d3.event.x, d3.event.y];
+                const newLambda = r0[0] + (v1[0] - v0[0]) * 0.45;
+                const newPhi = Math.max(-90, Math.min(90, r0[1] - (v1[1] - v0[1]) * 0.45));
+                projection.rotate([newLambda, newPhi, r0[2]]);
+                updateGlobeGeometry();
+                redrawFlows();
+              })
+              .on("end", function () {
+                dragging = false;
+                v0 = null;
+              });
+
+            svg.call(drag);
+
+            d3.select("#year-slider").on("input", function () {
+              updateVisualization(+this.value);
             });
-          })
-          .on("end", function () {
-            v0 = null;
-          });
 
-        chart.call(drag);
+            d3.select("#play").on("click", function () {
+              if (yearTimer) return;
+              d3.select(this).classed("active", true);
+              yearTimer = setInterval(function () {
+                const next = currentYear >= YEAR_MAX ? YEAR_MIN : currentYear + 1;
+                updateVisualization(next);
+              }, 900);
+            });
 
-        // Add play/pause functionality
-        d3.select("#play").on("click", function () {
-          if (timer) return;
-          timer = setInterval(function () {
-            currentYear = currentYear < 2023 ? currentYear + 1 : 2003;
+            d3.select("#pause").on("click", function () {
+              clearInterval(yearTimer);
+              yearTimer = null;
+              d3.select("#play").classed("active", false);
+            });
+
+            d3.select("#spin").on("click", function () {
+              spinning = !spinning;
+              d3.select(this).classed("active", spinning);
+            });
+
             updateVisualization(currentYear);
-          }, 1000);
-        });
-
-        d3.select("#pause").on("click", function () {
-          clearInterval(timer);
-          timer = null;
-        });
-
-        // Initial visualization
-        updateVisualization(currentYear);
-      });
+            animId = requestAnimationFrame(tick);
+          })
+          .catch(function (err) {
+            d3.select("#chart")
+              .append("p")
+              .style("padding", "24px")
+              .style("color", "#ffb14a")
+              .text(
+                "Could not load map data. Serve this folder over HTTP (not file://) — e.g. npx serve ."
+              );
+            console.error(err);
+          });
+      })();
     </script>
   </body>
 </html>
