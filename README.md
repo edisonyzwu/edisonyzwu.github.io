@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @edisonyzwu
 - 👀 I’m interested in data analysis, graphics, coding, and storytelling.
-- 🌱 I’m currently learning data journalism at UC Berkeley, while pursing a data science certificate.
+- 🌱 I graduated from UC Berkeley, where I studied data journalism.
 - 💞️ I’m looking to collaborate on any data-driven project.
 - 📫 My email: yuzhi_wu@berkeley.edu
 - 😄 Pronouns: he/him
